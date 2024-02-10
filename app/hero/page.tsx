@@ -138,7 +138,7 @@ const Hero = () => {
           ]}
           className="opensans text-[15px]"
         />
-        <p className="poppins-medium mt-8">Dari Abu Hurairah RA berkata, Rasulullah SAW bersabda: <br /> "Siapa berpuasa di bulan Ramadan dengan dilandasi iman dan <br /> ikhlas mengharap ridha Allah, maka diampuni dosanya yang lalu," (HR Al-Bukhari)</p>
+        <p className="poppins-medium mt-8">Dari Abu Hurairah RA berkata, Rasulullah SAW bersabda: <br /> &quot;Siapa berpuasa di bulan Ramadan dengan dilandasi iman dan <br /> ikhlas mengharap ridha Allah, maka diampuni dosanya yang lalu,&quot; (HR Al-Bukhari)</p>
       </div>
 
       <div className="flex flex-col w-[40rem]">
