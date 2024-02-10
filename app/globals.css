@@ -2,32 +2,195 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@font-face {
+  font-family: 'open';
+  src: url('../fonts/OpenSans-Bold.otf');
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@font-face {
+  font-family: 'sansi';
+  src: url('../fonts/SanshiroDemo-Black.otf');
+}
+
+@font-face {
+  font-family: 'grako';
+  src: url('../fonts/Grako-Demo-Regular.otf');
+}
+
+@font-face {
+  font-family: 'monas';
+  src: url('../fonts/monasgrotesk-bold.otf');
+}
+
+
+
+.bodi {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  background: linear-gradient(30deg, #0d0a0b, #0d2818, #0d0a0b);
+  color: white;
+  background-size: 200% auto; /* Menggunakan ukuran latar belakang 200% untuk membuat gerakan dari kiri ke kanan */
+  animation: gradientAnimation 50s ease-in-out infinite; /* Animasi bergerak selama 5 detik dengan jenis animasi ease */
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%; /* Mulai dari posisi kiri tengah */
+  }
+  50% {
+    background-position: 100% 50%; /* Posisi di tengah jalan saat animasi */
+  }
+  100% {
+    background-position: 0% 50%; /* Kembali ke posisi awal */
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.opensans {
+  font-family: 'open';
+}
+
+.sanshiro {
+  font-family: 'sansi';
+}
+
+.grako {
+  font-family: 'grako';
+}
+
+.monas {
+  font-family: 'monas';
+}
+
+.active-box {
+  background-image: linear-gradient(to bottom, #0d2818, #0d0a0b);
+  background-size: 100% 200%; /* Menentukan ukuran latar belakang */
+  animation: rareEffect 1s infinite ease-in-out alternate; /* Durasi, jenis, dan iterasi animasi */
+}
+
+.active-shadow {
+  box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.42);
+}
+
+
+@keyframes rareEffect {
+  0% {
+    background-position: 0% 0%; /* Posisi awal gradient */
+  }
+  100% {
+    background-position: 0% 100%; /* Posisi akhir gradient */
   }
 }
+
+
