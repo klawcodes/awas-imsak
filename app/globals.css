@@ -36,6 +36,12 @@
   animation: gradientAnimation 50s ease-in-out infinite; /* Animasi bergerak selama 5 detik dengan jenis animasi ease */
 }
 
+@media only screen and (max-width: 640px) {
+  .bodi {
+    min-height: 145vh;
+  }
+}
+
 @keyframes gradientAnimation {
   0% {
     background-position: 0% 50%; /* Mulai dari posisi kiri tengah */
