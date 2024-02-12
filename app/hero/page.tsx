@@ -6,6 +6,7 @@ import Textra from "react-textra";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import {Button, ButtonGroup} from "@nextui-org/react";
 
 const Hero = () => {
   useEffect(() => {
@@ -112,7 +113,7 @@ const Hero = () => {
     )}:${formatTime(currentTime.getSeconds())}`;
 
     // Set keterangan zona waktu lokal
-    const timeZoneInfo = `GMT+${offsetHours} | ${formattedTime} ${timeZone}`;
+    const timeZoneInfo = `UTC+${offsetHours} | ${formattedTime} ${timeZone}`;
 
     setLocalTimeZone(timeZoneInfo);
 
@@ -170,7 +171,7 @@ const Hero = () => {
             duration={500}
             data={[
               "Awas Imsak! hadir untuk teman-teman yang suka sahur jam 12 siang",
-              "Masa puasa 30 hari doang ga bisa sih cuy?",
+              "Masa puasa 30 hari doang ga bisa sih bang?",
               "Awas Imsak! Puasa Tenang, Hati Gembirang.",
             ]}
             className="opensans text-[15px]"
@@ -178,19 +179,41 @@ const Hero = () => {
         </div>
         <p
           className="poppins-medium 
-        mt-8 max-[640px]:text-[13px]"
+        mt-8 max-[640px]:text-[13px] w-[36rem] max-[640px]:w-[18rem]"
           data-aos="fade-up"
           data-aos-delay="1400"
           data-aos-duration="1000"
         >
-          Dari Abu Hurairah RA berkata, Rasulullah SAW bersabda: <br />{" "}
-          &quot;Siapa berpuasa di bulan Ramadan dengan dilandasi iman dan <br />{" "}
-          ikhlas mengharap ridha Allah, maka diampuni dosanya yang lalu,&quot;
-          (HR Al-Bukhari)
+          Dari Abu Hurairah RA berkata, Rasulullah SAW bersabda: &quot;Siapa
+          berpuasa di bulan Ramadan dengan dilandasi iman dan ikhlas mengharap
+          ridha Allah, maka diampuni dosanya yang lalu,&quot; (HR Al-Bukhari)
         </p>
+        <ButtonGroup className="mt-5 space-x-2">
+          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
+          data-aos="fade-right"
+          data-aos-delay="1600"
+          data-aos-duration="1000"
+          >
+            Awas Lupa Niat
+          </Button>
+          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
+          data-aos="fade-right"
+          data-aos-delay="1800"
+          data-aos-duration="1000"
+          >
+            Awas Lupa Tadarus
+          </Button>
+          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
+          data-aos="fade-right"
+          data-aos-delay="2000"
+          data-aos-duration="1000"
+          >
+            Awas Lupa Buka
+          </Button>
+        </ButtonGroup>
       </div>
 
-      <div className="flex flex-col w-[40rem] max-[640px]:w-[20rem]">
+      <div className="flex flex-col w-[50rem] max-[640px]:w-[20rem]">
         <div
           className="
         flex 
