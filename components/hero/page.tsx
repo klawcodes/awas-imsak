@@ -1,12 +1,12 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
+import Link from 'next/link'
 import Select from "react-select";
 import Textra from "react-textra";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import {Button, ButtonGroup} from "@nextui-org/react";
 
 const Hero = () => {
   useEffect(() => {
@@ -188,29 +188,34 @@ const Hero = () => {
           berpuasa di bulan Ramadan dengan dilandasi iman dan ikhlas mengharap
           ridha Allah, maka diampuni dosanya yang lalu,&quot; (HR Al-Bukhari)
         </p>
-        <ButtonGroup className="mt-5 space-x-2">
-          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-          data-aos="fade-right"
-          data-aos-delay="1600"
-          data-aos-duration="1000"
+        <div className="mt-5 space-x-2">
+          <button
+            className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow "
+            data-aos="fade-right"
+            data-aos-delay="1600"
+            data-aos-duration="1000"
           >
             Awas Lupa Niat
-          </Button>
-          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-          data-aos="fade-right"
-          data-aos-delay="1800"
-          data-aos-duration="1000"
-          >
-            Awas Lupa Tadarus
-          </Button>
-          <Button className="bg-[#0d1811] border-[#3e664e] text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-          data-aos="fade-right"
-          data-aos-delay="2000"
-          data-aos-duration="1000"
+          </button>
+          <Link href="/tadarus">
+            <button
+              className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
+              data-aos="fade-right"
+              data-aos-delay="1800"
+              data-aos-duration="1000"
+            >
+              Awas Lupa Tadarus
+            </button>
+          </Link>
+          <button
+            className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
+            data-aos="fade-right"
+            data-aos-delay="2000"
+            data-aos-duration="1000"
           >
             Awas Lupa Buka
-          </Button>
-        </ButtonGroup>
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col w-[50rem] max-[640px]:w-[20rem]">

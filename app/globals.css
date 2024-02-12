@@ -189,6 +189,33 @@
   box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.42);
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+.page-link {
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border: 1px solid #3e664e; /* Warna border yang sama dengan div di atasnya */
+  border-radius: 4px;
+  color: #3e664e;
+  cursor: pointer;
+}
+.page-link:hover {
+  background-color: #3e664e;
+  color: white;
+}
+.active {
+  background-color: #3e664e;
+  color: whitesmoke;
+
+}
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 @keyframes rareEffect {
   0% {
