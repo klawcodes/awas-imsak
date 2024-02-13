@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSurahDataSuccess } from '../../redux/surahActions';
+import Link from 'next/link'
 import ReactPaginate from 'react-paginate';
+
 
 const Quran = () => {
   interface SurahData {
@@ -20,11 +22,12 @@ const Quran = () => {
       
       
 
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const surahDataList = useSelector((state: any) => state.surah.surahDataList);
   const surahsPerPage = 16;
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showText, setShowText] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,47 +58,70 @@ const dispatch = useDispatch();
   const indexOfFirstSurah = indexOfLastSurah - surahsPerPage;
   const currentSurahs = surahDataList.slice(indexOfFirstSurah, indexOfLastSurah);
 
+  // Setelah 30 detik, tampilkan teks
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowText(true);
+    }, 10000); // 30 detik
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Jika loading selesai, sembunyikan teks
+  useEffect(() => {
+    if (!loading) {
+      setShowText(false);
+    }
+  }, [loading]);
 
       
 
   return (
     <>
-      <div className="container">
-        {loading ? (
-          <div className="rounded-md h-12 w-12 border-4 border-t-4 border-[#3e664e] animate-spin absolute"></div>
-        ) : (
+      <div className="container flex flex-col justify-center items-center">
+        {loading && (
+          <div className="w-12 h-12 border-4 border-t-4 border-[#3e664e] animate-spin"></div>
+        )}
+        {showText && (
+          <div className="text-center mt-5">Sabar ya, lagi puasa soalnya...</div>
+        )}
+        {!loading && !showText && (
           <>
-            <div className="grid grid-cols-4 gap-4">
-              {currentSurahs.map((surahData: any, index: number) => (
-                <div
-                  key={index}
-                  className="bg-[#0d1811] border border-[#3e664e] px-4 py-3 rounded-lg"
-                >
-                  <div className="flex justify-between space-x-[5rem]">
-                    <p className="text-white font-bold text-lg mb-2">
-                      {surahData.asma.id.short}
-                    </p>
-                    <p className="text-white">{surahData.asma.ar.short}</p>
-                  </div>
-                  <p className="text-white">{surahData.asma.translation.id}</p>
-                </div>
-              ))}
+            <div className='flex flex-col'>
+              <div className="grid grid-cols-4 gap-4">
+                {currentSurahs.map((surahData: any, index: number) => (
+                  <Link key={index} href={"/tadarus/surah/" + surahData.number}>
+                    <div className="bg-[#0d1811] border border-[#3e664e] px-4 py-3 rounded-lg cursor-pointer">
+                      <div className="flex justify-between space-x-[5rem]">
+                        <p className="text-white font-bold text-lg mb-2">
+                          {surahData.asma.id.short}
+                        </p>
+                        <p className="text-white">{surahData.asma.ar.short}</p>
+                      </div>
+                      <p className="text-white">
+                        {surahData.asma.translation.id}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <ReactPaginate
+                pageCount={Math.ceil(surahDataList.length / surahsPerPage)}
+                pageRangeDisplayed={5}
+                marginPagesDisplayed={2}
+                onPageChange={handlePageChange}
+                containerClassName={"pagination"}
+                activeLinkClassName={"active"}
+                previousLabel={<span>&#8592;</span>}
+                nextLabel={<span>&#8594;</span>}
+                breakLabel={"..."}
+                pageLinkClassName={"page-link"}
+                previousLinkClassName={"page-link"}
+                nextLinkClassName={"page-link"}
+                disabledClassName={"disabled"}
+              />
             </div>
-            <ReactPaginate
-              pageCount={Math.ceil(surahDataList.length / surahsPerPage)}
-              pageRangeDisplayed={5}
-              marginPagesDisplayed={2}
-              onPageChange={handlePageChange}
-              containerClassName={"pagination"}
-              activeLinkClassName={"active"}
-              previousLabel={<span>&#8592;</span>}
-              nextLabel={<span>&#8594;</span>} 
-              breakLabel={"..."}
-              pageLinkClassName={"page-link"}
-              previousLinkClassName={"page-link"} 
-              nextLinkClassName={"page-link"} 
-              disabledClassName={"disabled"} 
-            />
           </>
         )}
       </div>

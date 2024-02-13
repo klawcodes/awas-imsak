@@ -7,6 +7,7 @@ import Textra from "react-textra";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { motion } from 'framer-motion';
 
 const Hero = () => {
   useEffect(() => {
@@ -189,32 +190,32 @@ const Hero = () => {
           ridha Allah, maka diampuni dosanya yang lalu,&quot; (HR Al-Bukhari)
         </p>
         <div className="mt-5 space-x-2">
-          <button
+          <motion.button
             className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow "
-            data-aos="fade-right"
-            data-aos-delay="1600"
-            data-aos-duration="1000"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ delay: 1.5, duration: 1 }} 
           >
             Awas Lupa Niat
-          </button>
+          </motion.button>
           <Link href="/tadarus">
-            <button
+            <motion.button
               className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-              data-aos="fade-right"
-              data-aos-delay="1800"
-              data-aos-duration="1000"
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }} 
+              transition={{ delay: 2, duration: 1 }} 
             >
               Awas Lupa Tadarus
-            </button>
+            </motion.button>
           </Link>
-          <button
+          <motion.button
             className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-            data-aos="fade-right"
-            data-aos-delay="2000"
-            data-aos-duration="1000"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ delay: 2.5, duration: 1 }} 
           >
             Awas Lupa Buka
-          </button>
+          </motion.button>
         </div>
       </div>
 
