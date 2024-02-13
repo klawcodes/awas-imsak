@@ -3,12 +3,19 @@
 import Quran from "../../components/quran/page";
 import { Provider } from 'react-redux';
 import store from '../../redux/store';
+import Link from 'next/link'
 
 const Tadarus = () => {
   return (
     <>
       <div className="flex flex-col justify-center items-center h-screen">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center mt-10">
+          <Link href="/" className="flex justify-start w-full pl-[12%] ">
+          <div >
+            <p className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white py-1 px-3 rounded-full">
+              ⬅ Back to Home</p>
+          </div>
+          </Link>
           <p
             className="
         bg-gradient-to-r 
@@ -30,7 +37,7 @@ const Tadarus = () => {
             ayat ke ayat, sampai dapat rating bintang lima dari Allah!
           </p>
         </div>
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mb-10 mt-10">
           <Provider store={store}>
             <Quran />
           </Provider>

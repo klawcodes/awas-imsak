@@ -24,10 +24,10 @@ const Quran = () => {
 
   const dispatch = useDispatch();
   const surahDataList = useSelector((state: any) => state.surah.surahDataList);
-  const surahsPerPage = 16;
+  const surahsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [showText, setShowText] = useState(false);
+  const [showText,  setShowText] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +83,7 @@ const Quran = () => {
           <div className="w-12 h-12 border-4 border-t-4 border-[#3e664e] animate-spin"></div>
         )}
         {showText && (
-          <div className="text-center mt-5">Sabar ya, lagi puasa soalnya...</div>
+          <div className="text-center mt-5">Sabar ya, kan lagi puasaaa....</div>
         )}
         {!loading && !showText && (
           <>
