@@ -217,6 +217,11 @@
   cursor: not-allowed;
 }
 
+input[type=range]::-webkit-slider-runnable-track {
+  background-color: #3e664e; /* Ubah warna sesuai kebutuhan Anda */
+}
+
+
 @keyframes rareEffect {
   0% {
     background-position: 0% 0%; /* Posisi awal gradient */

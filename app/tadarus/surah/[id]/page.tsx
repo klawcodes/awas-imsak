@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SurahDetail from "../../../../components/surahDetail/page";
+import AudioButtonAyahs from "../../../../components/audioButtonAyahs/page"
+import AudioButtonWithSlider from "../../../../components/audioButton/page"
 import Link from 'next/link'
 import Image from 'next/image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight, faArrowRotateLeft, faHome } from '@fortawesome/free-solid-svg-icons';
 
 interface Ayah {
   number: {
@@ -206,43 +210,41 @@ const SurahDetails: React.FC = () => {
     <div className="flex flex-col justify-center items-center w-screen px-[3.5rem] py-[1rem]">
       <div className="text-center">
         <div className="flex justify-center space-x-[4rem] items-center py-3">
+          <Link href="/tadarus/surah/1">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            Al-Fatihah
+            </div>
+          </Link>
           {surahData && surahData.data.number !== 1 && (
-            <button
-              className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded"
-              onClick={() => navigateToSurah(surahData.data.number - 1)}
-              disabled={surahData.data.number === 1}
-            >
-              ⬅
-            </button>
+            <>
+              <button
+                className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
+                onClick={() => navigateToSurah(surahData.data.number - 1)}
+                disabled={surahData.data.number === 1}
+              >
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+            </>
           )}
           <Link href="/tadarus">
-            <Image
-              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z'/%3E%3Cpath fill='white' d='M2.614 5.426A1.5 1.5 0 0 1 4 4.5h10a7.5 7.5 0 1 1 0 15H5a1.5 1.5 0 0 1 0-3h9a4.5 4.5 0 1 0 0-9H7.621l.94.94a1.5 1.5 0 0 1-2.122 2.12l-3.5-3.5a1.5 1.5 0 0 1-.325-1.634'/%3E%3C/g%3E%3C/svg%3E"
-              alt="x"
-              style={Icons}
-              width={0}
-              height={0}
-              className="mb-2"
-            />
+          <FontAwesomeIcon icon={faArrowRotateLeft} />
           </Link>
           <Link href="/">
-            <Image
-              src="/img/bxs-home.svg"
-              alt="x"
-              style={Icons}
-              width={0}
-              height={0}
-              className="mb-2"
-            />
+          <FontAwesomeIcon icon={faHome} />
           </Link>
           {surahData && surahData.data.number !== 114 && (
             <button
-              className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded"
+              className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
               onClick={() => navigateToSurah(surahData.data.number + 1)}
             >
-              ➡
+              <FontAwesomeIcon icon={faArrowRight} />
             </button>
           )}
+          <Link href="/tadarus/surah/114">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            An-Nas
+            </div>
+          </Link>
         </div>
         <p className="text-[2rem]">{surahData.data.asma.ar.short}</p>
         <p
@@ -281,21 +283,22 @@ const SurahDetails: React.FC = () => {
             </div>
           )}
         </div>
-
-        <audio
-          controls
-          className="w-full justify-center items-center max-w-md rounded-lg p-2"
-        >
-          <source src={surahData.data.recitation.full} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+        <AudioButtonWithSlider
+          audioSource={surahData.data.recitation.full}
+          description=""
+        />
       </div>
       <div>
         <ul>
-          <div className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 w-[35rem] rounded-3xl justify-center text-center active-shadow">
-            <p className="text-3xl">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْم</p>
-            <p className="mt-5">Bismillahirrahmanirrahim</p>
-          </div>
+          {surahData.data.preBismillah && (
+            <div className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 w-[35rem] rounded-3xl justify-center text-center active-shadow">
+              <p className="text-3xl">{surahData.data.preBismillah.text.ar}</p>
+              <p className="mt-5 font-bold">
+                {surahData.data.preBismillah.text.read}
+              </p>
+              <p className="">{surahData.data.preBismillah.translation.id}</p>
+            </div>
+          )}
           {allAyahTextsAr.map((text: string, index: number) => (
             <div
               className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 w-[35rem] rounded-3xl active-shadow"
@@ -313,48 +316,47 @@ const SurahDetails: React.FC = () => {
               <div>
                 <a href={allAyahAudio[index]}>Dengarkan</a>
               </div>
+              <AudioButtonAyahs audioSource={allAyahAudio[index]} />
             </div>
           ))}
         </ul>
       </div>
       <div className="flex justify-center space-x-[4rem] items-center py-3">
-        {surahData && surahData.data.number !== 1 && (
-          <button
-            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded"
-            onClick={() => navigateToSurah(surahData.data.number - 1)}
-            disabled={surahData.data.number === 1}
-          >
-            ⬅
-          </button>
-        )}
-        <Link href="/tadarus">
-            <Image
-              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z'/%3E%3Cpath fill='white' d='M2.614 5.426A1.5 1.5 0 0 1 4 4.5h10a7.5 7.5 0 1 1 0 15H5a1.5 1.5 0 0 1 0-3h9a4.5 4.5 0 1 0 0-9H7.621l.94.94a1.5 1.5 0 0 1-2.122 2.12l-3.5-3.5a1.5 1.5 0 0 1-.325-1.634'/%3E%3C/g%3E%3C/svg%3E"
-              alt="x"
-              style={Icons}
-              width={0}
-              height={0}
-              className="mb-2"
-            />
+      <Link href="/tadarus/surah/1">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            Al-Fatihah
+            </div>
           </Link>
-        <Link href="/">
-            <Image
-              src="/img/bxs-home.svg"
-              alt="x"
-              style={Icons}
-              width={0}
-              height={0}
-              className="mb-2"
-            />
+          {surahData && surahData.data.number !== 1 && (
+            <>
+              <button
+                className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
+                onClick={() => navigateToSurah(surahData.data.number - 1)}
+                disabled={surahData.data.number === 1}
+              >
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+            </>
+          )}
+          <Link href="/tadarus">
+          <FontAwesomeIcon icon={faArrowRotateLeft} />
           </Link>
-        {surahData && surahData.data.number !== 114 && (
-          <button
-            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded"
-            onClick={() => navigateToSurah(surahData.data.number + 1)}
-          >
-            ➡
-          </button>
-        )}
+          <Link href="/">
+          <FontAwesomeIcon icon={faHome} />
+          </Link>
+          {surahData && surahData.data.number !== 114 && (
+            <button
+              className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
+              onClick={() => navigateToSurah(surahData.data.number + 1)}
+            >
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          )}
+          <Link href="/tadarus/surah/114">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            An-Nas
+            </div>
+          </Link>
       </div>
     </div>
   );
