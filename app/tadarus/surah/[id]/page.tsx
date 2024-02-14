@@ -312,10 +312,6 @@ const SurahDetails: React.FC = () => {
               </div>
               <div className="font-bold">{allAyahTextsRead[index]}</div>
               <div>{allAyahTransId[index]}</div>
-              <div></div>
-              <div>
-                <a href={allAyahAudio[index]}>Dengarkan</a>
-              </div>
               <AudioButtonAyahs audioSource={allAyahAudio[index]} />
             </div>
           ))}

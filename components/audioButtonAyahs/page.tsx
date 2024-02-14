@@ -23,7 +23,7 @@ const AudioButtonAyahs: React.FC<{ audioSource: string }> = ({ audioSource }) =>
   return (
     <>
       <audio ref={audioRef} src={audioSource} onEnded={handleAudioEnded} />
-      <div className='flex justify-end'>
+      <div className='flex justify-end mt-2'>
       <button className='px-4 py-2 bg-[#0d1811] border border-[#3e664e] rounded-full' onClick={togglePlay}>
         {isPlaying ? (
           <FontAwesomeIcon icon={faPause} />

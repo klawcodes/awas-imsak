@@ -9,7 +9,7 @@ const Tadarus = () => {
   return (
     <>
       <div className="flex flex-col justify-center items-center h-screen">
-        <div className="flex flex-col items-center mt-10">
+        <div className="flex flex-col items-center">
           <Link href="/" className="flex justify-start w-full pl-[12%] ">
           <div >
             <p className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white py-1 px-3 rounded-full">

@@ -64,7 +64,7 @@ const AudioButtonWithSlider: React.FC<AudioButtonProps> = ({ audioSource, descri
       />
       <div>{description}</div>
       <div className="flex w-full justify-center items-center">
-        <div className="flex w-[25rem] justify-center items-center space-x-5 bg-[#0d1811] border border-[#3e664e] rounded-full p-2">
+        <div className="flex w-[25rem] justify-center items-center space-x-5 bg-[#0d1811] border border-[#3e664e] rounded-full p-2 active-shadow">
           <button onClick={togglePlay}>
             {isPlaying ? (
               <FontAwesomeIcon icon={faPause} />
