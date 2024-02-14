@@ -33,22 +33,32 @@ const Quran = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const surahList = [];
-        for (let i = 1; i <= 113; i++) {
-          const response = await fetch(`https://quran-endpoint.vercel.app/quran/${i}`);
-          const data = await response.json();
-          surahList.push(data.data);
+        // Cek apakah data sudah ada di localStorage
+        const cachedData = localStorage.getItem('surahDataList');
+        if (cachedData) {
+          dispatch(fetchSurahDataSuccess(JSON.parse(cachedData)));
+        } else {
+          const surahList = [];
+          for (let i = 1; i <= 113; i++) {
+            const response = await fetch(`https://quran-endpoint.vercel.app/quran/${i}`);
+            const data = await response.json();
+            surahList.push(data.data);
+          }
+          dispatch(fetchSurahDataSuccess(surahList));
+  
+          // Simpan data ke localStorage
+          localStorage.setItem('surahDataList', JSON.stringify(surahList));
         }
-        dispatch(fetchSurahDataSuccess(surahList));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [dispatch]);
+  
 
   const handlePageChange = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
