@@ -221,6 +221,21 @@ const Hero = () => {
             </motion.button>
           </Link>
         </div>
+        <motion.div
+          className="mt-3"
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ 
+            delay: 2.5, 
+            duration: 1.5,
+            type: "spring", }}
+        >
+          <p className="text-[12px] italic">
+            © 2024  
+            <Link href="https://github.com/klawcodes" rel="noopener noreferrer" target="_blank" className="underline"> KLAW, </Link>
+            under RIOT REVENGER exclusive agreements
+          </p>
+        </motion.div>
       </div>
 
       <div className="flex flex-col w-[50rem] max-[640px]:w-[20rem]">
