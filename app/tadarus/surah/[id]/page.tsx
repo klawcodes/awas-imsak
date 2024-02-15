@@ -97,6 +97,9 @@ const SurahDetails: React.FC = () => {
   const [showTafsir, setShowTafsir] = useState(false);
   const [previousSurahName, setPreviousSurahName] = useState('');
   const [nextSurahName, setNextSurahName] = useState('');
+  const [isOn, setIsOn] = useState(false);
+  const [activeAyahs, setActiveAyahs] = useState<number[]>([]);
+  
 
 
   {
@@ -135,7 +138,21 @@ const SurahDetails: React.FC = () => {
       //console.log(url)
     }, [pathname, searchParams, surahId]);*/
   }
-  
+
+  const getPageLocalStorageKey = () => {
+    if (typeof window !== "undefined") {
+      return `activeAyahs_${window.location.pathname}`;
+    }
+    return "";
+  };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem(getPageLocalStorageKey());
+    if (storedData) {
+      setActiveAyahs(JSON.parse(storedData));
+    }
+  }, []);
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -204,7 +221,21 @@ const SurahDetails: React.FC = () => {
   };
 
   
+
   
+
+  const handleClick = (index: number) => {
+    let newActiveAyahs: number[] = [];
+    if (activeAyahs.includes(index)) {
+      newActiveAyahs = activeAyahs.filter((ayahIndex) => ayahIndex !== index);
+    } else {
+      newActiveAyahs = [index];
+    }
+    localStorage.setItem(getPageLocalStorageKey(), JSON.stringify(newActiveAyahs));
+    setActiveAyahs(newActiveAyahs);
+  };
+  
+
 
   return (
     <div className="flex flex-col justify-center items-center w-screen px-[3.5rem] py-[1rem]">
@@ -212,7 +243,7 @@ const SurahDetails: React.FC = () => {
         <div className="flex justify-center space-x-[4rem] items-center py-3">
           <Link href="/tadarus/surah/1">
             <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
-            Al-Fatihah
+              Al-Fatihah
             </div>
           </Link>
           {surahData && surahData.data.number !== 1 && (
@@ -227,10 +258,10 @@ const SurahDetails: React.FC = () => {
             </>
           )}
           <Link href="/tadarus">
-          <FontAwesomeIcon icon={faArrowRotateLeft} />
+            <FontAwesomeIcon icon={faArrowRotateLeft} />
           </Link>
           <Link href="/">
-          <FontAwesomeIcon icon={faHome} />
+            <FontAwesomeIcon icon={faHome} />
           </Link>
           {surahData && surahData.data.number !== 114 && (
             <button
@@ -242,7 +273,7 @@ const SurahDetails: React.FC = () => {
           )}
           <Link href="/tadarus/surah/114">
             <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
-            An-Nas
+              An-Nas
             </div>
           </Link>
         </div>
@@ -305,9 +336,18 @@ const SurahDetails: React.FC = () => {
               key={index}
             >
               <div className="flex justify-between text-center">
-                <div className="bg-[#0d1811] border border-[#3e664e] w-[35px] h-[35px] p-1 rounded-full">
-                  {allAyahNumbers[index]}
-                </div>
+              <button
+  key={index}
+  style={{
+    backgroundColor: activeAyahs.includes(index) ? '#4C0000' : '#0d1811'
+  }}
+  className={`border border-[#3e664e] w-[35px] h-[35px] p-1 rounded-full`}
+  onClick={() => handleClick(index)}
+>
+  {allAyahNumbers[index]}
+</button>
+
+
                 <div className="text-end text-3xl mb-5">{text}</div>
               </div>
               <div className="font-bold">{allAyahTextsRead[index]}</div>
@@ -318,41 +358,41 @@ const SurahDetails: React.FC = () => {
         </ul>
       </div>
       <div className="flex justify-center space-x-[4rem] items-center py-3">
-      <Link href="/tadarus/surah/1">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+        <Link href="/tadarus/surah/1">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
             Al-Fatihah
-            </div>
-          </Link>
-          {surahData && surahData.data.number !== 1 && (
-            <>
-              <button
-                className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
-                onClick={() => navigateToSurah(surahData.data.number - 1)}
-                disabled={surahData.data.number === 1}
-              >
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-            </>
-          )}
-          <Link href="/tadarus">
-          <FontAwesomeIcon icon={faArrowRotateLeft} />
-          </Link>
-          <Link href="/">
-          <FontAwesomeIcon icon={faHome} />
-          </Link>
-          {surahData && surahData.data.number !== 114 && (
+          </div>
+        </Link>
+        {surahData && surahData.data.number !== 1 && (
+          <>
             <button
               className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
-              onClick={() => navigateToSurah(surahData.data.number + 1)}
+              onClick={() => navigateToSurah(surahData.data.number - 1)}
+              disabled={surahData.data.number === 1}
             >
-              <FontAwesomeIcon icon={faArrowRight} />
+              <FontAwesomeIcon icon={faArrowLeft} />
             </button>
-          )}
-          <Link href="/tadarus/surah/114">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+          </>
+        )}
+        <Link href="/tadarus">
+          <FontAwesomeIcon icon={faArrowRotateLeft} />
+        </Link>
+        <Link href="/">
+          <FontAwesomeIcon icon={faHome} />
+        </Link>
+        {surahData && surahData.data.number !== 114 && (
+          <button
+            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-2xl text-center"
+            onClick={() => navigateToSurah(surahData.data.number + 1)}
+          >
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        )}
+        <Link href="/tadarus/surah/114">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
             An-Nas
-            </div>
-          </Link>
+          </div>
+        </Link>
       </div>
     </div>
   );
