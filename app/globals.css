@@ -36,6 +36,14 @@
   animation: gradientAnimation 50s ease-in-out infinite; /* Animasi bergerak selama 5 detik dengan jenis animasi ease */
 }
 
+.bodi-niat {
+  min-height: 117vh;
+}
+
+.bodi-tadarus {
+  min-height: 100vh;
+}
+
 @media only screen and (max-width: 640px) {
   .bodi {
     min-height: 160vh;
@@ -44,13 +52,29 @@
   .bodi-hero {
     min-height: 160vh;
   }
+
+  /*.parent {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(12, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 16px;
+    }*/
+    
+    
 }
 
 @media only screen and (max-width: 414px) {
   .bodi-hero {
     min-height: 215vh
   }
+
+  .bodi-niat {
+    min-height: 100vh;
+  }
 }
+
+
 
 @keyframes gradientAnimation {
   0% {

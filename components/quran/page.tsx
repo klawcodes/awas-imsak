@@ -28,6 +28,8 @@ const Quran = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [showText,  setShowText] = useState(false);
+  const [pageRangeDisplayed, setPageRangeDisplayed] = useState(5);
+  const [marginPagesDisplayed, setmarginPagesDisplayed] = useState(2);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +41,7 @@ const Quran = () => {
           dispatch(fetchSurahDataSuccess(JSON.parse(cachedData)));
         } else {
           const surahList = [];
-          for (let i = 1; i <= 113; i++) {
+          for (let i = 1; i <= 114; i++) {
             const response = await fetch(`https://quran-endpoint.vercel.app/quran/${i}`);
             const data = await response.json();
             surahList.push(data.data);
@@ -72,7 +74,7 @@ const Quran = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowText(true);
-    }, 10000); // 30 detik
+    }, 14000); // 30 detik
 
     return () => clearTimeout(timer);
   }, []);
@@ -83,6 +85,47 @@ const Quran = () => {
       setShowText(false);
     }
   }, [loading]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
+      if (window.innerWidth <= 640) {
+        setPageRangeDisplayed(2);
+      } else {
+        setPageRangeDisplayed(5);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Mengatur nilai awal saat komponen pertama kali dimuat
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
+      if (window.innerWidth <= 640) {
+        setmarginPagesDisplayed(0);
+      } else {
+        setmarginPagesDisplayed(2);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Mengatur nilai awal saat komponen pertama kali dimuat
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
 
       
 
@@ -97,13 +140,13 @@ const Quran = () => {
         )}
         {!loading && !showText && (
           <>
-            <div className='flex flex-col'>
-              <div className="grid grid-cols-4 gap-4">
+            <div className='flex flex-col max-[640px]:w-[100%]'>
+              <div className="grid grid-cols-4 gap-4 parent max-[640px]:grid-cols-1">
                 {currentSurahs.map((surahData: any, index: number) => (
                   <Link key={index} href={"/tadarus/surah/" + surahData.number}>
                     <div className="bg-[#0d1811] border border-[#3e664e] px-4 py-3 rounded-lg cursor-pointer">
                       <div className="flex justify-between space-x-[5rem]">
-                        <p className="text-white font-bold text-lg mb-2">
+                        <p className="text-white font-bold text-lg mb-2 max-[640px]:text-[20px]">
                           {surahData.asma.id.short}
                         </p>
                         <p className="text-white">{surahData.asma.ar.short}</p>
@@ -118,8 +161,8 @@ const Quran = () => {
 
               <ReactPaginate
                 pageCount={Math.ceil(surahDataList.length / surahsPerPage)}
-                pageRangeDisplayed={5}
-                marginPagesDisplayed={2}
+                pageRangeDisplayed={pageRangeDisplayed}
+                marginPagesDisplayed={marginPagesDisplayed}
                 onPageChange={handlePageChange}
                 containerClassName={"pagination"}
                 activeLinkClassName={"active"}

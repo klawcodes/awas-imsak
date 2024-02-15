@@ -240,9 +240,9 @@ const SurahDetails: React.FC = () => {
   return (
     <div className="flex flex-col justify-center items-center w-screen px-[3.5rem] py-[1rem]">
       <div className="text-center">
-        <div className="flex justify-center space-x-[4rem] items-center py-3">
+        <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem]">
           <Link href="/tadarus/surah/1">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem]">
               Al-Fatihah
             </div>
           </Link>
@@ -272,7 +272,7 @@ const SurahDetails: React.FC = () => {
             </button>
           )}
           <Link href="/tadarus/surah/114">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl text-center max-[640px]:w-[5.5rem]">
               An-Nas
             </div>
           </Link>
@@ -286,7 +286,7 @@ const SurahDetails: React.FC = () => {
         inline-block 
         monas
         text-[4rem]
-        max-[640px]:text-[5.5rem]
+        max-[640px]:text-[2.5rem]
         text-transparent 
         bg-clip-text
         drop-shadow-xl
@@ -301,7 +301,7 @@ const SurahDetails: React.FC = () => {
         </div>
         <div className="my-5">
           <button
-            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-full w-[25rem] active-shadow"
+            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-full w-[25rem] max-[640px]:w-[18rem] active-shadow"
             onClick={() => setShowTafsir(!showTafsir)}
           >
             {showTafsir ? "Sembunyikan Tafsir" : "Tampilkan Tafsir"}
@@ -319,10 +319,10 @@ const SurahDetails: React.FC = () => {
           description=""
         />
       </div>
-      <div>
+      <div className="w-[35rem] max-[640px]:w-[20rem]">
         <ul>
           {surahData.data.preBismillah && (
-            <div className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 w-[35rem] rounded-3xl justify-center text-center active-shadow">
+            <div className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 rounded-3xl justify-center text-center active-shadow">
               <p className="text-3xl">{surahData.data.preBismillah.text.ar}</p>
               <p className="mt-5 font-bold">
                 {surahData.data.preBismillah.text.read}
@@ -332,21 +332,22 @@ const SurahDetails: React.FC = () => {
           )}
           {allAyahTextsAr.map((text: string, index: number) => (
             <div
-              className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 w-[35rem] rounded-3xl active-shadow"
+              className="my-5 bg-[#0d1811] border border-[#3e664e] p-5 rounded-3xl active-shadow"
               key={index}
             >
               <div className="flex justify-between text-center">
-              <button
-  key={index}
-  style={{
-    backgroundColor: activeAyahs.includes(index) ? '#4C0000' : '#0d1811'
-  }}
-  className={`border border-[#3e664e] w-[35px] h-[35px] p-1 rounded-full`}
-  onClick={() => handleClick(index)}
->
-  {allAyahNumbers[index]}
-</button>
-
+                <button
+                  key={index}
+                  style={{
+                    backgroundColor: activeAyahs.includes(index)
+                      ? "#4C0000"
+                      : "#0d1811",
+                  }}
+                  className={`border border-[#3e664e] w-[35px] h-[35px] p-1 rounded-full`}
+                  onClick={() => handleClick(index)}
+                >
+                  {allAyahNumbers[index]}
+                </button>
 
                 <div className="text-end text-3xl mb-5">{text}</div>
               </div>
@@ -357,9 +358,9 @@ const SurahDetails: React.FC = () => {
           ))}
         </ul>
       </div>
-      <div className="flex justify-center space-x-[4rem] items-center py-3">
+      <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem]">
         <Link href="/tadarus/surah/1">
-          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem]">
             Al-Fatihah
           </div>
         </Link>
@@ -389,7 +390,7 @@ const SurahDetails: React.FC = () => {
           </button>
         )}
         <Link href="/tadarus/surah/114">
-          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem] text-center">
             An-Nas
           </div>
         </Link>
