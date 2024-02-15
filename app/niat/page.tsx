@@ -20,7 +20,7 @@ const Niat = () => {
         inline-block 
         monas
         text-[4rem]
-        max-[640px]:text-[5.5rem]
+        max-[640px]:text-[2rem]
         text-transparent 
         bg-clip-text
         drop-shadow-xl

@@ -38,7 +38,17 @@
 
 @media only screen and (max-width: 640px) {
   .bodi {
-    min-height: 145vh;
+    min-height: 160vh;
+  }
+
+  .bodi-hero {
+    min-height: 160vh;
+  }
+}
+
+@media only screen and (max-width: 414px) {
+  .bodi-hero {
+    min-height: 215vh
   }
 }
 

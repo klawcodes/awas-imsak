@@ -80,8 +80,8 @@ const Resep: React.FC = () => {
               height={500}
               className="rounded-2xl mb-2"
             />
-            <h2 className="text-lg font-semibold mb-2">{resep.title}</h2>
-            <div className="flex w-full justify-between mt-5 info">
+            <h2 className="text-lg font-semibold mb-10">{resep.title}</h2>
+            <div className="flex w-full justify-between info mt-auto">
               <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full active-shadow">
                 <FontAwesomeIcon icon={faClock} />{" "}
                 {resep.time ? resep.time : " -"}
