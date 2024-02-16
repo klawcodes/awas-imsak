@@ -19,6 +19,8 @@ const Resep: React.FC = () => {
   const [resepList, setResepList] = useState<Resep[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const resepPerPage = 6;
+  const [pageRangeDisplayed, setPageRangeDisplayed] = useState(5);
+  const [marginPagesDisplayed, setmarginPagesDisplayed] = useState(2);
 
   useEffect(() => {
     fetch('https://mahi-api.cyclic.app/makanMalam')
@@ -37,10 +39,49 @@ const Resep: React.FC = () => {
   const indexOfLastResep = (currentPage + 1) * resepPerPage;
   const indexOfFirstResep = indexOfLastResep - resepPerPage;
   const currentResep = resepList.slice(indexOfFirstResep, indexOfLastResep);
+  useEffect(() => {
+    const handleResize = () => {
+      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
+      if (window.innerWidth <= 640) {
+        setPageRangeDisplayed(2);
+      } else {
+        setPageRangeDisplayed(5);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Mengatur nilai awal saat komponen pertama kali dimuat
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
+      if (window.innerWidth <= 640) {
+        setmarginPagesDisplayed(0);
+      } else {
+        setmarginPagesDisplayed(2);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Mengatur nilai awal saat komponen pertama kali dimuat
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center px-5 py-10">
-      <Link href="/" className="flex justify-start w-[32rem]">
+      <Link href="/" className="flex justify-start w-[32rem] max-[640px]:w-[17rem]">
         <div>
           <p className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white py-1 px-3 rounded-full">
             ⬅ Back to Home
@@ -55,7 +96,7 @@ const Resep: React.FC = () => {
         inline-block 
         monas
         text-[4rem]
-        max-[640px]:text-[5.5rem]
+        max-[640px]:text-[2rem]
         text-transparent 
         bg-clip-text
         drop-shadow-xl
@@ -63,23 +104,25 @@ const Resep: React.FC = () => {
       >
         Awas Lupa Buka
       </p>
-      <p>
+      <p className='max-[640px]:text-[12px] justify-center text-center'>
         Masa udah puasa malah ga buka gara-gara ga masak, dua kata lucu
         &quot;Lupa Buka&quot;
       </p>
-      <div className="grid grid-cols-3 gap-4 w-full max-w-screen-lg mt-5">
+      <div className="grid grid-cols-3 gap-4 w-full max-w-screen-lg mt-5 max-[640px]:grid-cols-1">
         {currentResep.map((resep, index) => (
           <div
             key={index}
-            className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-full flex flex-col"
+            className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-full flex flex-col justify-center items-center text-center"
           >
+            <Link href={resep["link-href"]}>
             <Image
               src={resep["image-src"]}
               alt={resep.title}
               width={500}
               height={500}
-              className="rounded-2xl mb-2"
+              className="rounded-2xl mb-2 filter hover:grayscale transition-colors duration-300"
             />
+            </Link>
             <h2 className="text-lg font-semibold mb-10">{resep.title}</h2>
             <div className="flex w-full justify-between info mt-auto">
               <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full active-shadow">
@@ -102,8 +145,8 @@ const Resep: React.FC = () => {
       {/* Tampilkan penomoran halaman */}
       <ReactPaginate
         pageCount={Math.ceil(resepList.length / resepPerPage)}
-        pageRangeDisplayed={5}
-        marginPagesDisplayed={2}
+        pageRangeDisplayed={pageRangeDisplayed}
+        marginPagesDisplayed={marginPagesDisplayed}
         onPageChange={handlePageChange}
         containerClassName={"pagination"}
         activeLinkClassName={"active"}

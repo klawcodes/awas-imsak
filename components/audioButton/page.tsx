@@ -64,7 +64,7 @@ const AudioButtonWithSlider: React.FC<AudioButtonProps> = ({ audioSource, descri
       />
       <div>{description}</div>
       <div className="flex w-full justify-center items-center">
-        <div className="flex w-[25rem] max-[640px]:w-[18rem] justify-center items-center space-x-5 bg-[#0d1811] border border-[#3e664e] rounded-full p-2 active-shadow">
+        <div className="flex w-[25rem] max-[640px]:w-[18rem] max-[414px]:w-[20rem] justify-center items-center space-x-5 bg-[#0d1811] border border-[#3e664e] rounded-full p-2 active-shadow">
           <button onClick={togglePlay}>
             {isPlaying ? (
               <FontAwesomeIcon icon={faPause} />
@@ -80,7 +80,7 @@ const AudioButtonWithSlider: React.FC<AudioButtonProps> = ({ audioSource, descri
             onChange={handleSliderChange}
             style={{ backgroundColor: "#3e664e" }}
           />
-          <div className='max-[414px]:text-[10px]'>
+          <div className='max-[414px]:text-[11px]'>
             {formatTime(currentTime)} / {formatTime(duration)}
           </div>
         </div>

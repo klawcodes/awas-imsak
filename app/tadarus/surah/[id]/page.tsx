@@ -240,9 +240,9 @@ const SurahDetails: React.FC = () => {
   return (
     <div className="flex flex-col justify-center items-center w-screen px-[3.5rem] py-[1rem]">
       <div className="text-center">
-        <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem]">
+        <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem] max-[390px]:space-x-[0.6rem]">
           <Link href="/tadarus/surah/1">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem]">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem] max-[640px]:text-[12px]">
               Al-Fatihah
             </div>
           </Link>
@@ -272,7 +272,7 @@ const SurahDetails: React.FC = () => {
             </button>
           )}
           <Link href="/tadarus/surah/114">
-            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl text-center max-[640px]:w-[5.5rem]">
+            <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl text-center max-[640px]:w-[5.5rem] max-[640px]:text-[12px]">
               An-Nas
             </div>
           </Link>
@@ -301,7 +301,7 @@ const SurahDetails: React.FC = () => {
         </div>
         <div className="my-5">
           <button
-            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-full w-[25rem] max-[640px]:w-[18rem] active-shadow"
+            className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] text-white font-bold py-2 px-4 rounded-full w-[25rem] max-[640px]:w-[18rem] max-[414px]:w-[20rem] active-shadow"
             onClick={() => setShowTafsir(!showTafsir)}
           >
             {showTafsir ? "Sembunyikan Tafsir" : "Tampilkan Tafsir"}
@@ -358,9 +358,9 @@ const SurahDetails: React.FC = () => {
           ))}
         </ul>
       </div>
-      <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem]">
+      <div className="flex justify-center space-x-[4rem] items-center py-3 max-[640px]:space-x-[1rem] max-[390px]:space-x-[0.6rem]">
         <Link href="/tadarus/surah/1">
-          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem]">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl text-center justify-center max-[640px]:w-[5.5rem] max-[640px]:text-[12px]">
             Al-Fatihah
           </div>
         </Link>
@@ -390,7 +390,7 @@ const SurahDetails: React.FC = () => {
           </button>
         )}
         <Link href="/tadarus/surah/114">
-          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem] text-center">
+          <div className="bg-[#0d1811] border border-[#3e664e] hover:bg-[#1e3828] p-2 rounded-2xl max-[640px]:w-[5.5rem] text-center max-[640px]:text-[12px]">
             An-Nas
           </div>
         </Link>
