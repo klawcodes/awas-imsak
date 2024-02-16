@@ -231,7 +231,7 @@ const Hero = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 2.5, duration: 1 }}
               >
-                Awas Lupa Buka
+                Awas Lupa Masak
               </motion.button>
             </Link>
           </div>
