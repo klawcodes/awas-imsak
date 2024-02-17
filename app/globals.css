@@ -40,6 +40,10 @@
   min-height: 117vh;
 }
 
+.bodi-resep {
+  min-height: 100vh;
+}
+
 .bodi-tadarus {
   min-height: 100vh;
 }

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import ReactPaginate from 'react-paginate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faBookOpen, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 interface Resep {
   title: string;
@@ -17,10 +17,11 @@ interface Resep {
 
 const Resep: React.FC = () => {
   const [resepList, setResepList] = useState<Resep[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const resepPerPage = 6;
   const [pageRangeDisplayed, setPageRangeDisplayed] = useState(5);
-  const [marginPagesDisplayed, setmarginPagesDisplayed] = useState(2);
+  const [marginPagesDisplayed, setMarginPagesDisplayed] = useState(2);
 
   useEffect(() => {
     fetch('https://mahi-api.cyclic.app/makanMalam')
@@ -32,47 +33,28 @@ const Resep: React.FC = () => {
   // Fungsi untuk menangani perubahan halaman
   const handlePageChange = ({ selected }: { selected: number }) => {
     setCurrentPage(selected);
-};
+  };
 
+  // Fungsi untuk melakukan filter berdasarkan keyword pencarian
+  const filteredResep = resepList.filter(resep =>
+    resep.title.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   // Menampilkan resep sesuai halaman yang dipilih
   const indexOfLastResep = (currentPage + 1) * resepPerPage;
   const indexOfFirstResep = indexOfLastResep - resepPerPage;
-  const currentResep = resepList.slice(indexOfFirstResep, indexOfLastResep);
+  const currentResep = filteredResep.slice(indexOfFirstResep, indexOfLastResep);
+
+  // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
   useEffect(() => {
     const handleResize = () => {
-      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
-      if (window.innerWidth <= 640) {
-        setPageRangeDisplayed(2);
-      } else {
-        setPageRangeDisplayed(5);
-      }
+      setPageRangeDisplayed(window.innerWidth <= 640 ? 2 : 5);
+      setMarginPagesDisplayed(window.innerWidth <= 640 ? 0 : 2);
     };
 
-    window.addEventListener('resize', handleResize);
-
-    // Mengatur nilai awal saat komponen pertama kali dimuat
     handleResize();
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      // Mengubah nilai pageRangeDisplayed berdasarkan lebar layar
-      if (window.innerWidth <= 640) {
-        setmarginPagesDisplayed(0);
-      } else {
-        setmarginPagesDisplayed(2);
-      }
-    };
-
     window.addEventListener('resize', handleResize);
-
-    // Mengatur nilai awal saat komponen pertama kali dimuat
-    handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -81,7 +63,7 @@ const Resep: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center px-5 py-10">
+      <div className="flex flex-col justify-center items-center px-5 py-10 bodi-resep">
         <Link
           href="/"
           className="flex justify-start w-[32rem] max-[640px]:w-[17rem]"
@@ -111,40 +93,63 @@ const Resep: React.FC = () => {
         <p className="max-[640px]:text-[12px] justify-center text-center">
           Masa udah puasa malah ga buka gara-gara ga masak.
         </p>
-        <div className="grid grid-cols-3 gap-4 w-full max-w-screen-lg mt-5 max-[640px]:grid-cols-1">
-          {currentResep.map((resep, index) => (
-            <div
-              key={index}
-              className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-full flex flex-col justify-center items-center text-center"
-            >
-              <Link href={resep["link-href"]}>
-                <Image
-                  src={resep["image-src"]}
-                  alt={resep.title}
-                  loading="lazy"
-                  width={500}
-                  height={500}
-                  className="rounded-2xl mb-2 filter hover:grayscale transition-colors duration-300 ease-in-out"
-                />
-              </Link>
-              <h2 className="text-lg font-semibold mb-10">{resep.title}</h2>
-              <div className="flex w-full justify-between info mt-auto">
-                <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full active-shadow">
-                  <FontAwesomeIcon icon={faClock} />{" "}
-                  {resep.time ? resep.time : " -"}
-                </div>
-                <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full mb-1 active-shadow">
-                  {resep.difficulty ? resep.difficulty : " -"}
-                </div>
-                <Link
-                  href={resep["link-href"]}
-                  className="text-sm text-center justify-center items-center text-white bg-[#0d1811] border border-[#3e664e] hover:border-[#65a77f] transition-colors duration-300 ease-in-out  py-2 px-3 rounded-full active-shadow"
-                >
-                  <FontAwesomeIcon icon={faBookOpen} />
-                </Link>
+        <div>
+          <div className="relative">
+            <div className="flex items-center">
+              <input
+                type="text"
+                placeholder="Cari masakan....."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="bg-[#0d1811] border border-[#3e664e] text-white px-10 py-2 rounded-lg w-[20%] mb-4 mt-5"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FontAwesomeIcon icon={faSearch} className="text-white" />
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Menampilkan pesan jika hasil pencarian tidak ditemukan */}
+          {filteredResep.length === 0 && (
+            <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[810px] flex flex-col justify-center items-center text-center">
+              <p>Yah... masakannya ga ketemu, coba cari yang lain dehh</p>
+            </div>
+          )}
+          <div className="grid grid-cols-3 gap-4 w-full max-w-screen-lg mt-5 max-[640px]:grid-cols-1">
+            {currentResep.map((resep, index) => (
+              <div
+                key={index}
+                className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-full flex flex-col justify-center items-center text-center"
+              >
+                <Link href={resep["link-href"]}>
+                  <Image
+                    src={resep["image-src"]}
+                    alt={resep.title}
+                    loading="lazy"
+                    width={500}
+                    height={500}
+                    className="rounded-2xl mb-2 filter hover:grayscale transition-colors duration-300 ease-in-out"
+                  />
+                </Link>
+                <h2 className="text-lg font-semibold mb-10">{resep.title}</h2>
+                <div className="flex w-full justify-between info mt-auto">
+                  <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full active-shadow">
+                    <FontAwesomeIcon icon={faClock} />{" "}
+                    {resep.time ? resep.time : " -"}
+                  </div>
+                  <div className="text-sm text-white bg-[#0d1811] border border-[#3e664e] p-2 rounded-full mb-1 active-shadow">
+                    {resep.difficulty ? resep.difficulty : " -"}
+                  </div>
+                  <Link
+                    href={resep["link-href"]}
+                    className="text-sm text-center justify-center items-center text-white bg-[#0d1811] border border-[#3e664e] hover:border-[#65a77f] transition-colors duration-300 ease-in-out  py-2 px-3 rounded-full active-shadow"
+                  >
+                    <FontAwesomeIcon icon={faBookOpen} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         {/* Tampilkan penomoran halaman */}
         <ReactPaginate

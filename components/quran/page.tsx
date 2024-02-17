@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSurahDataSuccess } from '../../redux/surahActions';
 import Link from 'next/link'
 import ReactPaginate from 'react-paginate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 
 const Quran = () => {
@@ -30,6 +32,9 @@ const Quran = () => {
   const [showText,  setShowText] = useState(false);
   const [pageRangeDisplayed, setPageRangeDisplayed] = useState(5);
   const [marginPagesDisplayed, setmarginPagesDisplayed] = useState(2);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,9 +71,25 @@ const Quran = () => {
     setCurrentPage(selectedPage.selected);
   };
 
-  const indexOfLastSurah = (currentPage + 1) * surahsPerPage;
-  const indexOfFirstSurah = indexOfLastSurah - surahsPerPage;
-  const currentSurahs = surahDataList.slice(indexOfFirstSurah, indexOfLastSurah);
+  // Fungsi untuk menangani perubahan nilai pada input pencarian
+const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  setSearchTerm(event.target.value);
+};
+
+// Logika untuk pemfilteran data surah berdasarkan input pencarian
+useEffect(() => {
+  const results = surahDataList.filter((surahData: any) => {
+    return surahData.asma.id.short.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+  setSearchResults(results);
+}, [searchTerm, surahDataList]);
+
+
+// Ubah bagian pengaturan currentSurahs
+const indexOfLastSurah = (currentPage + 1) * surahsPerPage;
+const indexOfFirstSurah = indexOfLastSurah - surahsPerPage;
+const currentSurahs = searchResults.slice(indexOfFirstSurah, indexOfLastSurah);
+
 
   // Setelah 30 detik, tampilkan teks
   useEffect(() => {
@@ -126,8 +147,7 @@ const Quran = () => {
     };
   }, []);
 
-
-      
+  const pageCount = Math.ceil(searchResults.length / surahsPerPage);
 
   return (
     <>
@@ -140,7 +160,28 @@ const Quran = () => {
         )}
         {!loading && !showText && (
           <>
-            <div className='flex flex-col max-[640px]:w-[100%]'>
+            <div className="flex flex-col max-[640px]:w-[100%]">
+              {/* Search bar */}
+              <div className="relative">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Search Surah..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    className="bg-[#0d1811] border border-[#3e664e] text-white px-4 py-2 rounded-lg w-[20%] mb-5"
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 mb-3 flex items-center pointer-events-none">
+                    <FontAwesomeIcon icon={faSearch} className="text-white" />
+                  </div>
+                </div>
+              </div>
+              {searchResults.length === 0 && (
+                <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[1084px] flex flex-col justify-center items-center text-center">
+                  <p>Yah... surahnya ga ketemu, coba cari yang lain dehh</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-4 gap-4 parent max-[640px]:grid-cols-1">
                 {currentSurahs.map((surahData: any, index: number) => (
                   <Link key={index} href={"/tadarus/surah/" + surahData.number}>
@@ -159,8 +200,9 @@ const Quran = () => {
                 ))}
               </div>
 
+              {/* Pagination */}
               <ReactPaginate
-                pageCount={Math.ceil(surahDataList.length / surahsPerPage)}
+                pageCount={pageCount}
                 pageRangeDisplayed={pageRangeDisplayed}
                 marginPagesDisplayed={marginPagesDisplayed}
                 onPageChange={handlePageChange}
