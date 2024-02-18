@@ -256,7 +256,7 @@ const Hero = () => {
                 {" "}
                 KLAW,{" "}
               </Link>
-              under RIOT REVENGER exclusive agreements
+              under RIOT REVENGER exclusive agreements.
             </p>
           </motion.div>
         </div>
