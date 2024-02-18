@@ -8,7 +8,7 @@ import Link from 'next/link'
 const Tadarus = () => {
   return (
     <>
-      <div className="flex flex-col justify-center items-center bodi-tadarus w-full max-[640px]:mt-5">
+      <div className="flex flex-col justify-center items-center bodi-tadarus -mt-1 w-full max-[640px]:mt-5">
         <div className="flex flex-col items-center">
           <Link href="/" className="flex justify-start w-full pl-[12%] ">
           <div >
@@ -40,7 +40,7 @@ const Tadarus = () => {
             Jangan lupa tadarus di sini! Baca quran online, buat gadget anda lebih berfaedah!
           </p>
         </div>
-        <div className="flex justify-center mb-10 mt-10">
+        <div className="flex justify-center mb-1 mt-5">
           <Provider store={store}>
             <Quran />
           </Provider>

@@ -308,9 +308,11 @@ const SurahDetails: React.FC = () => {
           </button>
 
           {showTafsir && (
-            <div className="mt-2 p-4 shadow-md flex flex-col justify-center items-center text-center bg-[#0d1811] border border-[#3e664e] rounded-2xl active-shadow">
-              <p className="text-lg font-bold mb-2">Tafsir:</p>
-              <p className="w-[20rem]">{surahData.data.tafsir.id}</p>
+            <div className="flex w-full items-center justify-center">
+              <div className="mt-2 w-[25rem] max-[640px]:w-[18rem] max-[414px]:w-[20rem] p-4 shadow-md flex flex-col justify-center items-center text-center bg-[#0d1811] border border-[#3e664e] rounded-2xl active-shadow">
+                <p className="text-lg font-bold mb-2">Tafsir:</p>
+                <p className="w-[20rem] max-[640px]:w-[15rem] max-[414px]:w-[17rem]">{surahData.data.tafsir.id}</p>
+              </div>
             </div>
           )}
         </div>

@@ -151,7 +151,7 @@ const currentSurahs = searchResults.slice(indexOfFirstSurah, indexOfLastSurah);
 
   return (
     <>
-      <div className="container flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         {loading && (
           <div className="w-12 h-12 border-4 border-t-4 border-[#3e664e] animate-spin"></div>
         )}
@@ -169,15 +169,20 @@ const currentSurahs = searchResults.slice(indexOfFirstSurah, indexOfLastSurah);
                     placeholder="Search Surah..."
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="bg-[#0d1811] border border-[#3e664e] text-white px-4 py-2 rounded-lg w-[20%] mb-5"
+                    className="parent bg-[#0d1811] border border-[#3e664e] text-white px-[2.4rem] py-2 rounded-lg w-[20%] max-[640px]:w-[70%] mb-5"
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 mb-3 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faSearch} className="text-white" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FontAwesomeIcon
+                      icon={faSearch}
+                      className="text-white -mt-5"
+                    />{" "}
+                    {/* Tambahkan class -mt-1 */}
                   </div>
                 </div>
               </div>
+
               {searchResults.length === 0 && (
-                <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[1084px] flex flex-col justify-center items-center text-center">
+                <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[1080px] flex flex-col justify-center items-center text-center">
                   <p>Yah... surahnya ga ketemu, coba cari yang lain dehh</p>
                 </div>
               )}

@@ -101,7 +101,7 @@ const Resep: React.FC = () => {
                 placeholder="Cari masakan....."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                className="bg-[#0d1811] border border-[#3e664e] text-white px-10 py-2 rounded-lg w-[20%] mb-4 mt-5"
+                className="bg-[#0d1811] border border-[#3e664e] text-white px-10 py-2 rounded-lg w-[20%] mb-4 mt-5 max-[640px]:w-[60%]"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FontAwesomeIcon icon={faSearch} className="text-white" />
@@ -111,7 +111,7 @@ const Resep: React.FC = () => {
 
           {/* Menampilkan pesan jika hasil pencarian tidak ditemukan */}
           {filteredResep.length === 0 && (
-            <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[810px] flex flex-col justify-center items-center text-center">
+            <div className="bg-[#0d1811] border border-[#3e664e] p-4 rounded-2xl w-[810px] max-[640px]:w-[300px] flex flex-col justify-center items-center text-center">
               <p>Yah... masakannya ga ketemu, coba cari yang lain dehh</p>
             </div>
           )}
