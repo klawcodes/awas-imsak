@@ -34,6 +34,7 @@
   color: white;
   background-size: 200% auto; /* Menggunakan ukuran latar belakang 200% untuk membuat gerakan dari kiri ke kanan */
   animation: gradientAnimation 50s ease-in-out infinite; /* Animasi bergerak selama 5 detik dengan jenis animasi ease */
+  overflow-x: hidden;
 }
 
 .bodi-niat {
