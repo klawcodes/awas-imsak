@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
 
-    const targetDate = new Date('2024-03-12T00:00:00').getTime();
+    const targetDate = new Date('2024-03-11T18:30:00').getTime();
 
     const timer = setInterval(() => {
     
