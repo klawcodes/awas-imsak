@@ -61,7 +61,7 @@ export default function Home() {
   
   return (
     <>
-      {!countdownFinished && (
+      {/* Tampilkan penomoran halaman {!countdownFinished && (
         <>
           <div className="flex flex-col w-screen h-screen justify-center items-center text-center">
             <p
@@ -134,7 +134,8 @@ export default function Home() {
         </>
       )}
 
-      {countdownFinished && !showText && <Hero />}
+      {countdownFinished && !showText && <Hero />}*/}
+      <Hero/>
     </>
   );
 }
