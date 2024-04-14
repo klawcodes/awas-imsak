@@ -129,7 +129,7 @@ const Hero = () => {
 
   return (
     <div className="bodi-hero">
-      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
+      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-center items-center h-screen">
         <div className="flex flex-col">
           <Image
             src="/img/bunderan.png"
