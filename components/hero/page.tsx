@@ -8,6 +8,7 @@ import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { motion } from 'framer-motion';
+import Notification from '../notification/page';
 
 const Hero = () => {
   useEffect(() => {
@@ -126,10 +127,18 @@ const Hero = () => {
   const formatTime = (time: number) => {
     return time < 10 ? `0${time}` : time.toString();
   };
+  const [showNotification, setShowNotification] = useState(true); // Ubah menjadi true agar notifikasi langsung muncul
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
 
   return (
     <div className="bodi-hero">
-      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-center items-center h-screen">
+      {showNotification && (
+        <Notification message="Selamat hari raya idul fitri 1445 H 🙏 " onClose={handleCloseNotification} />
+      )}
+      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
         <div className="flex flex-col">
           <Image
             src="/img/bunderan.png"
