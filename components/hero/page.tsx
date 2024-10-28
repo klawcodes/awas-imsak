@@ -8,7 +8,7 @@ import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import Notification from '../notification/page';
 
 interface Location {
@@ -180,7 +180,8 @@ const Hero = () => {
 
   return (
     <div className="bodi-hero">
-      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-center items-center h-screen">
+      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
+        <Toaster position="top-left" reverseOrder={false} />
         <div className="flex flex-col">
           <Image
             src="/img/bunderan.png"
@@ -346,14 +347,16 @@ const Hero = () => {
             className="z-[999]"
           >
             <Select
-          options={locations}
-          value={selectedLocation}
-          onChange={handleLocationChange}
-          placeholder={isLoading ? "Mendeteksi lokasi..." : "Cari lokasi..."}
-          isDisabled={isLoading}
-          isClearable
-          className="poppins-regular mb-4 hover:cursor-text text-black"
-        />
+              options={locations}
+              value={selectedLocation}
+              onChange={handleLocationChange}
+              placeholder={
+                isLoading ? "Mendeteksi lokasi..." : "Cari lokasi..."
+              }
+              isDisabled={isLoading}
+              isClearable
+              className="poppins-regular mb-4 hover:cursor-text text-black"
+            />
           </div>
           {prayerSchedule && (
             <div className="poppins-regular text-[20px]">
