@@ -8,7 +8,19 @@ import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import Notification from '../notification/page';
+
+interface Location {
+  value: string;
+  label: string;
+}
+interface Config {
+  opencageApiKey: string;
+}
+export const config: Config = {
+  opencageApiKey: process.env.NEXT_PUBLIC_OPENCAGE_API_KEY || '',
+};
 
 const Hero = () => {
   useEffect(() => {
@@ -16,52 +28,35 @@ const Hero = () => {
     AOS.refresh();
   }, []);
 
-  const [locations, setLocations] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [selectedLocation, setSelectedLocation] = useState<{
-    value: string;
-    label: string;
-  } | null>({
-    value: "1301", // ID Kota Jakarta
-    label: "Kota Jakarta",
-  });
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [prayerSchedule, setPrayerSchedule] = useState<any>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [localTimeZone, setLocalTimeZone] = useState("");
 
-  useEffect(() => {
-    // Fetch data from API
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://api.myquran.com/v2/sholat/kota/semua"
-        );
-        const data = await response.json();
-        const formattedLocations = data.data.map(
-          (location: { id: string; lokasi: string }) => ({
-            value: location.id,
-            label: location.lokasi,
-          })
-        );
-        setLocations(formattedLocations);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    // Fetch prayer schedule for Jakarta after component mounts
-    if (selectedLocation) {
-      fetchPrayerSchedule(selectedLocation.value);
+  // Fungsi untuk mengambil data lokasi dari API
+  const fetchData = async () => {
+    try {
+      const response = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
+      const data = await response.json();
+      const formattedLocations = data.data.map((location: { id: string; lokasi: string }) => ({
+        value: location.id,
+        label: location.lokasi,
+      }));
+      setLocations(formattedLocations);
+      return formattedLocations;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Gagal mengambil data lokasi");
+      return [];
     }
-  }, [selectedLocation]);
+  };
 
   const fetchPrayerSchedule = async (idKota: string) => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // Bulan dimulai dari 0 (Januari)
+    const month = currentDate.getMonth() + 1;
     const day = currentDate.getDate();
 
     try {
@@ -69,7 +64,7 @@ const Hero = () => {
       const response = await fetch(url);
       const data = await response.json();
       if (data && data.data && data.data.jadwal) {
-        setPrayerSchedule(data.data.jadwal); // Set jadwal sholat ke state
+        setPrayerSchedule(data.data.jadwal);
       } else {
         console.error("Invalid response data:", data);
       }
@@ -78,28 +73,89 @@ const Hero = () => {
     }
   };
 
-  const handleLocationChange = (
-    selectedOption: { value: string; label: string } | null
-  ) => {
-    setSelectedLocation(selectedOption);
-    if (selectedOption) {
-      fetchPrayerSchedule(selectedOption.value); // Panggil fungsi fetchPrayerSchedule dengan idKota terpilih
+  
+  // Fungsi untuk mendapatkan lokasi pengguna dan mencocokkan dengan data API
+  const detectAndSetLocation = async (locations: Location[]) => {
+    if ("geolocation" in navigator) {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+
+        const { latitude, longitude } = position.coords;
+        
+        const response = await fetch(
+          `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${config.opencageApiKey}&language=id`
+        );
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+          const locationDetail = data.results[0].components;
+          const regency = locationDetail.county || locationDetail.city || locationDetail.state_district;
+          
+          if (regency) {
+            const matchedLocation = locations.find(loc => {
+              const normalizedRegency = regency.toUpperCase()
+                .replace('KABUPATEN', 'KAB.')
+                .replace('KOTA', 'KOTA');
+              return loc.label.includes(normalizedRegency);
+            });
+
+            if (matchedLocation) {
+              setSelectedLocation(matchedLocation);
+              toast.success(`Lokasi terdeteksi: ${matchedLocation.label}`);
+            } else {
+              toast.error("Lokasi tidak ditemukan dalam daftar");
+              setSelectedLocation(locations[0]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        toast.error("Gagal mendeteksi lokasi");
+        setSelectedLocation(locations[0]);
+      }
+    } else {
+      toast.error("Browser tidak mendukung geolocation");
+      setSelectedLocation(locations[0]);
+    }
+    setIsLoading(false);
+  };
+
+  const handleLocationChange = (selected: Location | null) => {
+    setSelectedLocation(selected);
+    if (selected) {
+      fetchPrayerSchedule(selected.value);
     }
   };
 
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [localTimeZone, setLocalTimeZone] = useState("");
+  useEffect(() => {
+    const initializeLocation = async () => {
+      const locationsList = await fetchData();
+      await detectAndSetLocation(locationsList);
+    };
+
+    initializeLocation();
+  }, []);
+
+  useEffect(() => {
+    if (selectedLocation) {
+      fetchPrayerSchedule(selectedLocation.value);
+    }
+  }, [selectedLocation]);
+
+  const formatTime = (time: number) => {
+    return time < 10 ? `0${time}` : time.toString();
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    // Mendapatkan offset dari UTC
     const offsetMinutes = -currentTime.getTimezoneOffset();
     const offsetHours = Math.floor(offsetMinutes / 60);
 
-    // Set zona waktu lokal
     let timeZone = "";
     if (offsetHours === 7) {
       timeZone = "WIB";
@@ -109,12 +165,10 @@ const Hero = () => {
       timeZone = "WIT";
     }
 
-    // Format waktu
     const formattedTime = `${formatTime(currentTime.getHours())}:${formatTime(
       currentTime.getMinutes()
     )}:${formatTime(currentTime.getSeconds())}`;
 
-    // Set keterangan zona waktu lokal
     const timeZoneInfo = `UTC+${offsetHours} | ${formattedTime} ${timeZone}`;
 
     setLocalTimeZone(timeZoneInfo);
@@ -124,21 +178,9 @@ const Hero = () => {
     };
   }, [currentTime]);
 
-  const formatTime = (time: number) => {
-    return time < 10 ? `0${time}` : time.toString();
-  };
-  const [showNotification, setShowNotification] = useState(true); // Ubah menjadi true agar notifikasi langsung muncul
-
-  const handleCloseNotification = () => {
-    setShowNotification(false);
-  };
-
   return (
     <div className="bodi-hero">
-      {showNotification && (
-        <Notification message="Selamat hari raya idul fitri 1445 H 🙏 " onClose={handleCloseNotification} />
-      )}
-      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
+      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-center items-center h-screen">
         <div className="flex flex-col">
           <Image
             src="/img/bunderan.png"
@@ -304,13 +346,14 @@ const Hero = () => {
             className="z-[999]"
           >
             <Select
-              options={locations}
-              value={selectedLocation}
-              onChange={handleLocationChange}
-              placeholder="Cari lokasi..."
-              isClearable
-              className="poppins-regular mb-4 hover:cursor-text text-black"
-            />
+          options={locations}
+          value={selectedLocation}
+          onChange={handleLocationChange}
+          placeholder={isLoading ? "Mendeteksi lokasi..." : "Cari lokasi..."}
+          isDisabled={isLoading}
+          isClearable
+          className="poppins-regular mb-4 hover:cursor-text text-black"
+        />
           </div>
           {prayerSchedule && (
             <div className="poppins-regular text-[20px]">
