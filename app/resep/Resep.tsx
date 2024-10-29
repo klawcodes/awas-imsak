@@ -28,8 +28,6 @@ const Resep: React.FC = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Jika Anda menggunakan credentials, tambahkan ini
-        // 'credentials': 'include',
       },
     })
       .then(response => {
