@@ -24,7 +24,7 @@ const Resep: React.FC = () => {
   const [marginPagesDisplayed, setMarginPagesDisplayed] = useState(2);
 
   useEffect(() => {
-    fetch('https://mahi-api.cyclic.app/makanMalam')
+    fetch('https://mahi-unofficial.netlify.app/.netlify/functions/server/makanMalam')
       .then(response => response.json())
       .then((data: Resep[]) => setResepList(data))
       .catch(error => console.error('Error fetching data:', error));
