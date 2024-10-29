@@ -24,8 +24,20 @@ const Resep: React.FC = () => {
   const [marginPagesDisplayed, setMarginPagesDisplayed] = useState(2);
 
   useEffect(() => {
-    fetch('https://mahi-unofficial.netlify.app/.netlify/functions/server/makanMalam')
-      .then(response => response.json())
+    fetch('https://mahi-unofficial.netlify.app/.netlify/functions/server/makanMalam', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Jika Anda menggunakan credentials, tambahkan ini
+        // 'credentials': 'include',
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data: Resep[]) => setResepList(data))
       .catch(error => console.error('Error fetching data:', error));
   }, []);
