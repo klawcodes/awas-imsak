@@ -15,6 +15,7 @@
     "@nextui-org/react": "^2.2.9",
     "@reduxjs/toolkit": "^2.1.0",
     "aos": "^2.3.4",
+    "bmkg-wrapper": "^2.0.0",
     "framer-motion": "^11.0.3",
     "next": "14.1.0",
     "react": "^18",

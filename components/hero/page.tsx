@@ -10,6 +10,7 @@ import "aos/dist/aos.css";
 import { motion } from 'framer-motion';
 import { Toaster, toast } from 'react-hot-toast';
 import Notification from '../notification/page';
+import Weather from '../weather/page'
 
 interface Location {
   value: string;
@@ -344,13 +345,13 @@ const Hero = () => {
             <p className="text-[12px] italic">
               © 2024
               <Link
-                href="https://github.com/klawcodes"
+                href="https://github.com/pr0kc"
                 rel="noopener noreferrer"
                 target="_blank"
                 className="underline"
               >
                 {" "}
-                KLAW,{" "}
+                pr0kc,{" "}
               </Link>
               under RIOT REVENGER exclusive agreements.
             </p>
@@ -359,22 +360,24 @@ const Hero = () => {
 
         <div className="flex flex-col w-[50rem] max-[640px]:w-[20rem]">
           <div
-            className="
-        flex 
-        space-x-1 
-        text-3xl
-        max-[640px]:text-lg
-        mb-5 
-        border 
-        border-[#0d2818] 
-        p-4 
-        rounded-full 
-        text-center justify-center items-center bg-[#0d1811]"
+            className="flex mb-5 border border-[#0d2818] rounded-full bg-[#0d1811] overflow-hidden"
             data-aos="fade-up"
             data-aos-delay="1000"
             data-aos-duration="1000"
           >
-            <p className="opensans">{localTimeZone}</p>
+            {/* Left side - Timezone */}
+            <div className="flex-1 p-4 text-center border-r border-[#0d2818]">
+              <p className="text-xl max-[640px]:text-lg opensans">
+                {localTimeZone}
+              </p>
+            </div>
+
+            {/* Right side - Weather */}
+            <div className="flex-1 p-4 text-center">
+              <p className="text-xl max-[640px]:text-lg opensans">
+               -
+              </p>
+            </div>
           </div>
           <h1
             className="text-2xl poppins-extrabold mb-4 max-[640px]:text-lg"
