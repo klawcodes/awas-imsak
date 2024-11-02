@@ -15,6 +15,11 @@
 }
 
 @font-face {
+  font-family: 'aramadhan';
+  src: url('../fonts/AmazingRamadhan.otf');
+}
+
+@font-face {
   font-family: 'grako';
   src: url('../fonts/Grako-Demo-Regular.otf');
 }
@@ -24,7 +29,20 @@
   src: url('../fonts/monasgrotesk-bold.otf');
 }
 
+@font-face {
+  font-family: 'kahlil';
+  src: url('../fonts/Kahlil.otf');
+}
 
+@font-face {
+  font-family: 'qramadhan';
+  src: url('../fonts/QiyamuRamadhan.otf');
+}
+
+@font-face {
+  font-family: 'coolvetica';
+  src: url('../fonts/coolvetica\ rg.otf');
+}
 
 .bodi {
   font-family: "Poppins", sans-serif;
@@ -216,6 +234,22 @@
 
 .monas {
   font-family: 'monas';
+}
+
+.kahlil {
+  font-family: 'kahlil';
+}
+
+.aramadhan {
+  font-family: 'aramadhan';
+}
+
+.qramadhan {
+  font-family: 'qramadhan';
+}
+
+.coolvetica {
+  font-family: 'coolvetica';
 }
 
 .active-box {
