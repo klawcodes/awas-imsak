@@ -1,16 +1,16 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import Link from 'next/link'
+import Link from "next/link";
 import Select from "react-select";
 import Textra from "react-textra";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { motion } from 'framer-motion';
-import { Toaster, toast } from 'react-hot-toast';
-import Notification from '../notification/page';
-import Weather from '../weather/page'
+import { motion } from "framer-motion";
+import { Toaster, toast } from "react-hot-toast";
+import Notification from "../notification/page";
+import Weather from "../weather/page";
 
 interface Location {
   value: string;
@@ -20,7 +20,7 @@ interface Config {
   opencageApiKey: string;
 }
 export const config: Config = {
-  opencageApiKey: process.env.NEXT_PUBLIC_OPENCAGE_API_KEY || '',
+  opencageApiKey: process.env.NEXT_PUBLIC_OPENCAGE_API_KEY || "",
 };
 
 const Hero = () => {
@@ -30,7 +30,9 @@ const Hero = () => {
   }, []);
 
   const [locations, setLocations] = useState<Location[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [prayerSchedule, setPrayerSchedule] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -39,12 +41,16 @@ const Hero = () => {
   // Fungsi untuk mengambil data lokasi dari API
   const fetchData = async () => {
     try {
-      const response = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
+      const response = await fetch(
+        "https://api.myquran.com/v2/sholat/kota/semua"
+      );
       const data = await response.json();
-      const formattedLocations = data.data.map((location: { id: string; lokasi: string }) => ({
-        value: location.id,
-        label: location.lokasi,
-      }));
+      const formattedLocations = data.data.map(
+        (location: { id: string; lokasi: string }) => ({
+          value: location.id,
+          label: location.lokasi,
+        })
+      );
       setLocations(formattedLocations);
       return formattedLocations;
     } catch (error) {
@@ -74,94 +80,126 @@ const Hero = () => {
     }
   };
 
-  
   const detectAndSetLocation = async (locations: Location[]) => {
     if ("geolocation" in navigator) {
       try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          // Tambahkan options untuk geolocation
-          const options = {
-            enableHighAccuracy: true,  // Mencoba mendapatkan hasil yang lebih akurat
-            timeout: 10000,            // Timeout setelah 10 detik
-            maximumAge: 0              // Selalu mendapatkan posisi terbaru
-          };
-          
-          navigator.geolocation.getCurrentPosition(
-            resolve,
-            (error: GeolocationPositionError) => {
-              // Tangani error geolocation secara spesifik
-              let errorMessage = "Gagal mendeteksi lokasi: ";
-              switch (error.code) {
-                case error.PERMISSION_DENIED:
-                  errorMessage += "Izin lokasi ditolak. Mohon aktifkan izin lokasi di pengaturan browser Anda.";
-                  break;
-                case error.POSITION_UNAVAILABLE:
-                  errorMessage += "Informasi lokasi tidak tersedia. Pastikan GPS/lokasi perangkat Anda aktif.";
-                  break;
-                case error.TIMEOUT:
-                  errorMessage += "Waktu permintaan lokasi habis. Silakan coba lagi.";
-                  break;
-                default:
-                  errorMessage += error.message || "Terjadi kesalahan yang tidak diketahui.";
-              }
-              reject(new Error(errorMessage));
-            },
-            options
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            // Tambahkan options untuk geolocation
+            const options = {
+              enableHighAccuracy: true, // Mencoba mendapatkan hasil yang lebih akurat
+              timeout: 10000, // Timeout setelah 10 detik
+              maximumAge: 0, // Selalu mendapatkan posisi terbaru
+            };
+
+            navigator.geolocation.getCurrentPosition(
+              resolve,
+              (error: GeolocationPositionError) => {
+                // Tangani error geolocation secara spesifik
+                let errorMessage = "Gagal mendeteksi lokasi: ";
+                switch (error.code) {
+                  case error.PERMISSION_DENIED:
+                    errorMessage +=
+                      "Izin lokasi ditolak. Mohon aktifkan izin lokasi di pengaturan browser Anda.";
+                    break;
+                  case error.POSITION_UNAVAILABLE:
+                    errorMessage +=
+                      "Informasi lokasi tidak tersedia. Pastikan GPS/lokasi perangkat Anda aktif.";
+                    break;
+                  case error.TIMEOUT:
+                    errorMessage +=
+                      "Waktu permintaan lokasi habis. Silakan coba lagi.";
+                    break;
+                  default:
+                    errorMessage +=
+                      error.message ||
+                      "Terjadi kesalahan yang tidak diketahui.";
+                }
+                reject(new Error(errorMessage));
+              },
+              options
+            );
+          }
+        );
+
+        const normalizeString = (str: string): string => {
+          return (
+            str
+              .toLowerCase()
+              // Menghapus semua tanda baca
+              .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+              // Mengganti multiple spaces dengan single space
+              .replace(/\s+/g, " ")
+              // Normalisasi kata-kata umum
+              .replace(/kabupaten/g, "kab")
+              .replace(/kota/g, "kota")
+              // Trim whitespace
+              .trim()
           );
-        });
-  
+        };
         const { latitude, longitude } = position.coords;
-        
+
         try {
           const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${config.opencageApiKey}&language=id`
+            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}&language=id`
           );
-          
+
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          
+
           const data = await response.json();
-          
           if (!data.results || data.results.length === 0) {
             throw new Error("Tidak ada hasil lokasi yang ditemukan");
           }
-  
+
           const locationDetail = data.results[0].components;
-          const regency = locationDetail.county || locationDetail.city || locationDetail.state_district;
-          
+          // Menggunakan property regency langsung dari response API
+          const regency = locationDetail.regency;
+
           if (!regency) {
             throw new Error("Detail lokasi tidak lengkap");
           }
-  
-          const matchedLocation = locations.find(loc => {
-            const normalizedRegency = regency.toUpperCase()
-              .replace('KABUPATEN', 'KAB.')
-              .replace('KOTA', 'KOTA');
-            return loc.label.includes(normalizedRegency);
+
+          const matchedLocation = locations.find((loc) => {
+            const normalizedApiRegency = normalizeString(regency);
+            const normalizedLocationLabel = normalizeString(loc.label);
+
+            return (
+              normalizedLocationLabel.includes(normalizedApiRegency) ||
+              normalizedApiRegency.includes(normalizedLocationLabel)
+            );
           });
-  
+
           if (matchedLocation) {
             setSelectedLocation(matchedLocation);
-            toast.success(`Lokasi terdeteksi: ${matchedLocation.label}`, {duration: 4000});
+            toast.success(`Lokasi terdeteksi: ${matchedLocation.label}`, {
+              duration: 4000,
+            });
           } else {
-            toast.error("Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia", {duration: 4000});
+            toast.error(
+              "Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia",
+              { duration: 4000 }
+            );
             setSelectedLocation(locations[50]);
           }
-  
         } catch (apiError) {
           console.error("API Error:", apiError);
-          toast.error("Gagal mengambil detail lokasi dari server", {duration: 4000});
+          toast.error("Gagal mengambil detail lokasi dari server", {
+            duration: 4000,
+          });
           setSelectedLocation(locations[50]);
         }
-  
       } catch (error) {
         console.error("Geolocation Error:", error);
-        toast.error(error instanceof Error ? error.message : "Gagal mendeteksi lokasi", {duration: 4000});
+        toast.error(
+          error instanceof Error ? error.message : "Gagal mendeteksi lokasi",
+          { duration: 4000 }
+        );
         setSelectedLocation(locations[50]);
       }
     } else {
-      toast.error("Browser tidak mendukung geolocation", {duration: 4000});
+      toast.error("Browser tidak mendukung geolocation", { duration: 4000 });
       setSelectedLocation(locations[50]);
     }
     setIsLoading(false);
@@ -374,9 +412,7 @@ const Hero = () => {
 
             {/* Right side - Weather */}
             <div className="flex-1 p-4 text-center">
-              <p className="text-xl max-[640px]:text-lg opensans">
-               -
-              </p>
+              <p className="text-xl max-[640px]:text-lg opensans">-</p>
             </div>
           </div>
           <h1
