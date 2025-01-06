@@ -14,6 +14,8 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@nextui-org/react": "^2.2.9",
     "@reduxjs/toolkit": "^2.1.0",
+    "@tsparticles/engine": "^3.7.1",
+    "@tsparticles/react": "^3.0.0",
     "aos": "^2.3.4",
     "bmkg-wrapper": "^2.0.0",
     "framer-motion": "^11.0.3",
@@ -25,9 +27,11 @@
     "react-redux": "^9.1.0",
     "react-select": "^5.8.0",
     "react-textra": "^0.2.0",
+    "react-tsparticles": "^2.12.2",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "tsparticles": "^3.7.1"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",

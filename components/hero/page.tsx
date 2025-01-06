@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
 import Notification from "../notification/page";
 import Weather from "../weather/page";
+import RamadhanCountdown from "../ramadhanCountdown/page";
 
 interface Location {
   value: string;
@@ -138,7 +139,6 @@ const Hero = () => {
           );
         };
         const { latitude, longitude } = position.coords;
-
         try {
           const response = await fetch(
             `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}&language=id`
@@ -263,6 +263,7 @@ const Hero = () => {
 
   return (
     <div className="bodi-hero">
+      < RamadhanCountdown/>
       <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
         <Toaster position="top-left" reverseOrder={false} />
         <div className="flex flex-col">
@@ -288,7 +289,7 @@ const Hero = () => {
           from-[#4f772d] 
           to-[#aad576] 
           inline-block 
-          monas
+          kahlil
           text-[8rem]
           max-[640px]:text-[5.5rem]
           text-transparent 
@@ -300,7 +301,7 @@ const Hero = () => {
             data-aos-delay="1000"
             data-aos-duration="1000"
           >
-            Awas <br /> Imsak!
+            Awas Imsak!
           </p>
           <div
             data-aos="fade-up"
@@ -315,7 +316,7 @@ const Hero = () => {
                 "Masa puasa 30 hari doang ga bisa sih bang?",
                 "Awas Imsak! Puasa Tenang, Hati Gembirang.",
               ]}
-              className="opensans text-[15px]"
+              className="opensans text-[15px] mt-5"
             />
           </div>
           <p
@@ -381,7 +382,7 @@ const Hero = () => {
             }}
           >
             <p className="text-[12px] italic">
-              © 2024
+              © {new Date().getFullYear()}{" "}
               <Link
                 href="https://github.com/pr0kc"
                 rel="noopener noreferrer"

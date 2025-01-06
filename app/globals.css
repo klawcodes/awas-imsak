@@ -40,6 +40,11 @@
 }
 
 @font-face {
+  font-family: 'aaramadhan';
+  src: url('../fonts/RamadhanAmazing-jEnDv.ttf');
+}
+
+@font-face {
   font-family: 'coolvetica';
   src: url('../fonts/coolvetica\ rg.otf');
 }
@@ -241,7 +246,7 @@
 }
 
 .aramadhan {
-  font-family: 'aramadhan';
+  font-family: 'aaramadhan';
 }
 
 .qramadhan {
@@ -302,6 +307,21 @@ input[type=range]::-webkit-slider-runnable-track {
   100% {
     background-position: 0% 100%; /* Posisi akhir gradient */
   }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 
