@@ -263,7 +263,6 @@ const Hero = () => {
 
   return (
     <div className="bodi-hero">
-      < RamadhanCountdown/>
       <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
         <Toaster position="top-left" reverseOrder={false} />
         <div className="flex flex-col">
