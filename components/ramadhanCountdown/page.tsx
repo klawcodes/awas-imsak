@@ -11,8 +11,6 @@ interface TimeLeft {
   seconds: number;
 }
 
-
-
 const RamadhanCountdown = () => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
@@ -20,12 +18,36 @@ const RamadhanCountdown = () => {
     minutes: 0,
     seconds: 0
   });
-  const [isVisible, setIsVisible] = useState(false);
   
-    useEffect(() => {
-      AOS.init();
-      AOS.refresh();
-    }, []);
+  // Inisialisasi isVisible dari localStorage atau default ke true
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('countdownVisible');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
+  
+  useEffect(() => {
+    AOS.init();
+    AOS.refresh();
+  }, []);
+
+  // Effect untuk menangani setTimeout initial display
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Effect untuk menyimpan state visibility ke localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('countdownVisible', JSON.stringify(isVisible));
+    }
+  }, [isVisible]);
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -47,16 +69,16 @@ const RamadhanCountdown = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 3000); // Delay 3 detik (3000ms)
+  const handleClose = () => {
+    setIsVisible(false);
+  };
 
   if (!isVisible) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-[99999] bg-[#0d1811] border border-[#3e664e] p-6 rounded-lg shadow-lg max-w-sm animate-fade-in">
       <button 
-        onClick={() => setIsVisible(false)}
+        onClick={handleClose}
         className="absolute top-2 left-2 text-gray-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded-full hover:bg-[#1a2e22]"
       >
         ×
@@ -87,10 +109,10 @@ const RamadhanCountdown = () => {
         </div>
         
         <p className="mt-4 text-sm text-gray-400">
-        &quot;What makes your sorry different from all your other sorrys before?&quot;
+          &quot;What makes your sorry different from all your other sorrys before?&quot;
         </p>
         <p className="mt-4 text-sm text-gray-400">
-        Awas Imsak! © {new Date().getFullYear()}{" "}
+          Awas Imsak! © {new Date().getFullYear()}{" "}
         </p>
       </div>
     </div>

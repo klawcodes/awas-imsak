@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import StarryBackground from "@/components/star/page";
 
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/brand.ico" sizes="any" />
       </head>
-      <body className="bodi">{children}</body>
+      <body><StarryBackground numberOfStars={50}>{children}</StarryBackground></body>
     </html>
   );
 }

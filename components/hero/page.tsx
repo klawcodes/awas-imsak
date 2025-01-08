@@ -86,17 +86,15 @@ const Hero = () => {
       try {
         const position = await new Promise<GeolocationPosition>(
           (resolve, reject) => {
-            // Tambahkan options untuk geolocation
             const options = {
-              enableHighAccuracy: true, // Mencoba mendapatkan hasil yang lebih akurat
-              timeout: 10000, // Timeout setelah 10 detik
-              maximumAge: 0, // Selalu mendapatkan posisi terbaru
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
             };
-
+  
             navigator.geolocation.getCurrentPosition(
               resolve,
               (error: GeolocationPositionError) => {
-                // Tangani error geolocation secara spesifik
                 let errorMessage = "Gagal mendeteksi lokasi: ";
                 switch (error.code) {
                   case error.PERMISSION_DENIED:
@@ -122,67 +120,102 @@ const Hero = () => {
             );
           }
         );
-
+  
         const normalizeString = (str: string): string => {
           return (
             str
               .toLowerCase()
-              // Menghapus semua tanda baca
               .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-              // Mengganti multiple spaces dengan single space
               .replace(/\s+/g, " ")
-              // Normalisasi kata-kata umum
               .replace(/kabupaten/g, "kab")
               .replace(/kota/g, "kota")
-              // Trim whitespace
               .trim()
           );
         };
+  
         const { latitude, longitude } = position.coords;
         try {
           const response = await fetch(
             `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}&language=id`
           );
-
+  
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-
+  
           const data = await response.json();
           if (!data.results || data.results.length === 0) {
             throw new Error("Tidak ada hasil lokasi yang ditemukan");
           }
-
+  
           const locationDetail = data.results[0].components;
-          // Menggunakan property regency langsung dari response API
           const regency = locationDetail.regency;
-
-          if (!regency) {
-            throw new Error("Detail lokasi tidak lengkap");
+          const city = locationDetail.city;
+          const county = locationDetail.county; // Tambahan untuk kabupaten
+          const state = locationDetail.state; // Tambahan untuk provinsi
+  
+          // Fungsi untuk mencari lokasi berdasarkan beberapa kriteria
+          const findLocation = (searchTerms: string[]): Location | undefined => {
+            return locations.find((loc) => {
+              const normalizedLocationLabel = normalizeString(loc.label);
+              return searchTerms.some(term => {
+                const normalizedTerm = normalizeString(term);
+                return (
+                  normalizedLocationLabel.includes(normalizedTerm) ||
+                  normalizedTerm.includes(normalizedLocationLabel)
+                );
+              });
+            });
+          };
+  
+          // Urutan pencarian berdasarkan prioritas
+          let matchedLocation: Location | undefined;
+          let detectedLocation = "";
+  
+          if (regency) {
+            matchedLocation = findLocation([regency]);
+            detectedLocation = regency;
           }
-
-          const matchedLocation = locations.find((loc) => {
-            const normalizedApiRegency = normalizeString(regency);
-            const normalizedLocationLabel = normalizeString(loc.label);
-
-            return (
-              normalizedLocationLabel.includes(normalizedApiRegency) ||
-              normalizedApiRegency.includes(normalizedLocationLabel)
-            );
-          });
-
+  
+          if (!matchedLocation && city) {
+            matchedLocation = findLocation([city]);
+            detectedLocation = city;
+          }
+  
+          if (!matchedLocation && county) {
+            matchedLocation = findLocation([county]);
+            detectedLocation = county;
+          }
+  
+          // Fallback ke provinsi jika tidak ada yang cocok
+          if (!matchedLocation && state) {
+            matchedLocation = findLocation([state]);
+            detectedLocation = state;
+          }
+  
           if (matchedLocation) {
             setSelectedLocation(matchedLocation);
-            toast.success(`Lokasi terdeteksi: ${matchedLocation.label}`, {
+            toast.success(`Lokasi terdeteksi: ${matchedLocation.label} (${detectedLocation})`, {
               duration: 4000,
             });
           } else {
             toast.error(
-              "Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia",
+              "Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia", 
               { duration: 4000 }
             );
-            setSelectedLocation(locations[50]);
+            setSelectedLocation(locations[50]); // Default location
           }
+  
+          // Log untuk debugging
+          console.log("Detail Lokasi:", {
+            regency,
+            city,
+            county,
+            state,
+            detected: detectedLocation,
+            matched: matchedLocation?.label
+          });
+  
         } catch (apiError) {
           console.error("API Error:", apiError);
           toast.error("Gagal mengambil detail lokasi dari server", {
