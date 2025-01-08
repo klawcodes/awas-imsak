@@ -296,6 +296,7 @@ const Hero = () => {
 
   return (
     <div className="bodi-hero">
+      <RamadhanCountdown/>
       <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center h-screen">
         <Toaster position="top-left" reverseOrder={false} />
         <div className="flex flex-col">
@@ -416,13 +417,13 @@ const Hero = () => {
             <p className="text-[12px] italic">
               © {new Date().getFullYear()}{" "}
               <Link
-                href="https://github.com/pr0kc"
+                href="https://github.com/klawcodes"
                 rel="noopener noreferrer"
                 target="_blank"
                 className="underline"
               >
                 {" "}
-                pr0kc,{" "}
+                Muhammad Dimas,{" "}
               </Link>
               under RIOT REVENGER exclusive agreements.
             </p>

@@ -213,7 +213,7 @@ const Quran = () => {
     <div className="flex flex-col justify-center items-center">
       <Suspense fallback={<LoadingSpinner />}>
         {loading && loadedSurahs.length === 0 ? (
-          <div>
+          <div className='text-center items-center justify-center'>
             <div className="w-12 h-12 border-4 border-t-4 border-[#3e664e] animate-spin"></div>
             <div className="text-center mt-3">
               Loading... {loadingProgress}%
