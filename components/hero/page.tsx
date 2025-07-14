@@ -432,9 +432,9 @@ const Hero = () => {
                 className="underline"
               >
                 {" "}
-                Muhammad Dimas,{" "}
+                EINCLAIR {" "}
               </Link>
-              under RIOT REVENGER exclusive agreements.
+              Innovations Team
             </p>
           </motion.div>
         </div>
