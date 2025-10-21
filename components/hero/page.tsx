@@ -429,12 +429,11 @@ const Hero = () => {
                 href="https://github.com/klawcodes"
                 rel="noopener noreferrer"
                 target="_blank"
-                className="underline"
+                className=""
               >
                 {" "}
-                EINCLAIR {" "}
+                EINCLAIR Innovations Team{" "}
               </Link>
-              Innovations Team
             </p>
           </motion.div>
         </div>
