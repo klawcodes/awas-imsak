@@ -5,359 +5,363 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 @font-face {
-  font-family: 'open';
-  src: url('../fonts/OpenSans-Bold.otf');
+    font-family: "open";
+    src: url("../fonts/OpenSans-Bold.otf");
 }
 
 @font-face {
-  font-family: 'sansi';
-  src: url('../fonts/SanshiroDemo-Black.otf');
+    font-family: "sansi";
+    src: url("../fonts/SanshiroDemo-Black.otf");
 }
 
 @font-face {
-  font-family: 'aramadhan';
-  src: url('../fonts/AmazingRamadhan.otf');
+    font-family: "aramadhan";
+    src: url("../fonts/AmazingRamadhan.otf");
 }
 
 @font-face {
-  font-family: 'grako';
-  src: url('../fonts/Grako-Demo-Regular.otf');
+    font-family: "grako";
+    src: url("../fonts/Grako-Demo-Regular.otf");
 }
 
 @font-face {
-  font-family: 'monas';
-  src: url('../fonts/monasgrotesk-bold.otf');
+    font-family: "monas";
+    src: url("../fonts/monasgrotesk-bold.otf");
 }
 
 @font-face {
-  font-family: 'kahlil';
-  src: url('../fonts/Kahlil.otf');
+    font-family: "kahlil";
+    src: url("../fonts/Kahlil.otf");
 }
 
 @font-face {
-  font-family: 'qramadhan';
-  src: url('../fonts/QiyamuRamadhan.otf');
+    font-family: "qramadhan";
+    src: url("../fonts/QiyamuRamadhan.otf");
 }
 
 @font-face {
-  font-family: 'aaramadhan';
-  src: url('../fonts/RamadhanAmazing-jEnDv.ttf');
+    font-family: "aaramadhan";
+    src: url("../fonts/RamadhanAmazing-jEnDv.ttf");
 }
 
 @font-face {
-  font-family: 'coolvetica';
-  src: url('../fonts/coolvetica\ rg.otf');
+    font-family: "coolvetica";
+    src: url("../fonts/coolvetica\ rg.otf");
 }
 
 /* styles/starryBackground.css */
 .bodi {
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  background: linear-gradient(30deg, #0d0a0b, #0d2818, #0d0a0b);
-  color: white;
-  background-size: 200% auto;
-  animation: gradientAnimation 50s ease-in-out infinite;
-  overflow-x: hidden;
-  min-height: 100vh;
-  margin: 0;
-  position: relative;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    background: linear-gradient(30deg, #0d0a0b, #0d2818, #0d0a0b);
+    color: white;
+    background-size: 200% auto;
+    animation: gradientAnimation 50s ease-in-out infinite;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
 }
 
 @keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0;
-  animation: twinkle var(--duration) ease-in-out infinite;
-  animation-delay: var(--delay);
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--duration) ease-in-out infinite;
+    animation-delay: var(--delay);
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0; transform: scale(0.3); }
-  50% { opacity: 0.8; transform: scale(1); }
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
 }
 
 .bodi-niat {
-  min-height: 117vh;
+    min-height: 117vh;
 }
 
 .bodi-resep {
-  min-height: 100vh;
+    min-height: 100vh;
 }
 
 .bodi-tadarus {
-  min-height: 100vh;
+    min-height: 100vh;
 }
 
 @media only screen and (max-width: 640px) {
-  .bodi {
-    min-height: 100vh;
-  }
+    .bodi {
+        min-height: 100vh;
+    }
 
-  .bodi-hero {
-    min-height: 160vh;
-  }
+    .bodi-hero {
+        min-height: 210vh;
+    }
 
-  /*.parent {
+    /*.parent {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(12, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 16px;
     }*/
-    
-    
 }
 
 @media only screen and (max-width: 414px) {
-  .bodi-hero {
-    min-height: 215vh
-  }
+    .bodi-hero {
+        min-height: 215vh;
+    }
 
-  .bodi-niat {
-    min-height: 80vh;
-  }
+    .bodi-niat {
+        min-height: 80vh;
+    }
 }
-
-
 
 @keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%; /* Mulai dari posisi kiri tengah */
-  }
-  50% {
-    background-position: 100% 50%; /* Posisi di tengah jalan saat animasi */
-  }
-  100% {
-    background-position: 0% 50%; /* Kembali ke posisi awal */
-  }
+    0% {
+        background-position: 0% 50%; /* Mulai dari posisi kiri tengah */
+    }
+    50% {
+        background-position: 100% 50%; /* Posisi di tengah jalan saat animasi */
+    }
+    100% {
+        background-position: 0% 50%; /* Kembali ke posisi awal */
+    }
 }
 
-
 .poppins-thin {
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: normal;
 }
 
 .poppins-extralight {
-  font-family: "Poppins", sans-serif;
-  font-weight: 200;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+    font-style: normal;
 }
 
 .poppins-light {
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: normal;
 }
 
 .poppins-regular {
-  font-family: "Poppins", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .poppins-medium {
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .poppins-semibold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: normal;
 }
 
 .poppins-bold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
 }
 
 .poppins-extrabold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-style: normal;
 }
 
 .poppins-black {
-  font-family: "Poppins", sans-serif;
-  font-weight: 900;
-  font-style: normal;
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: normal;
 }
 
 .poppins-thin-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: italic;
 }
 
 .poppins-extralight-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 200;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+    font-style: italic;
 }
 
 .poppins-light-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: italic;
 }
 
 .poppins-regular-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 400;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: italic;
 }
 
 .poppins-medium-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
 }
 
 .poppins-semibold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: italic;
 }
 
 .poppins-bold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: italic;
 }
 
 .poppins-extrabold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-style: italic;
 }
 
 .poppins-black-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 900;
-  font-style: italic;
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: italic;
 }
 
 .opensans {
-  font-family: 'open';
+    font-family: "open";
 }
 
 .sanshiro {
-  font-family: 'sansi';
+    font-family: "sansi";
 }
 
 .grako {
-  font-family: 'grako';
+    font-family: "grako";
 }
 
 .monas {
-  font-family: 'monas';
+    font-family: "monas";
 }
 
 .kahlil {
-  font-family: 'kahlil';
+    font-family: "kahlil";
 }
 
 .aramadhan {
-  font-family: 'aaramadhan';
+    font-family: "aaramadhan";
 }
 
 .qramadhan {
-  font-family: 'qramadhan';
+    font-family: "qramadhan";
 }
 
 .coolvetica {
-  font-family: 'coolvetica';
+    font-family: "coolvetica";
 }
 
 .active-box {
-  background-image: linear-gradient(to bottom, #0d2818, #0d0a0b);
-  background-size: 100% 200%; /* Menentukan ukuran latar belakang */
-  animation: rareEffect 1s infinite ease-in-out alternate; /* Durasi, jenis, dan iterasi animasi */
+    background-image: linear-gradient(to bottom, #0d2818, #0d0a0b);
+    background-size: 100% 200%; /* Menentukan ukuran latar belakang */
+    animation: rareEffect 1s infinite ease-in-out alternate; /* Durasi, jenis, dan iterasi animasi */
 }
 
 .active-shadow {
-  box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.42);
+    box-shadow: 0px 0px 25px -1px rgba(0, 0, 0, 0.42);
 }
 
 .pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
 }
 .page-link {
-  padding: 0.5rem 1rem;
-  margin: 0 0.25rem;
-  border: 1px solid #3e664e; /* Warna border yang sama dengan div di atasnya */
-  border-radius: 4px;
-  color: #3e664e;
-  cursor: pointer;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border: 1px solid #3e664e; /* Warna border yang sama dengan div di atasnya */
+    border-radius: 4px;
+    color: #3e664e;
+    cursor: pointer;
 }
 .page-link:hover {
-  background-color: #3e664e;
-  color: white;
+    background-color: #3e664e;
+    color: white;
 }
 .active {
-  background-color: #3e664e;
-  color: whitesmoke;
-
+    background-color: #3e664e;
+    color: whitesmoke;
 }
 .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
-  background-color: #3e664e; /* Ubah warna sesuai kebutuhan Anda */
+input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #3e664e; /* Ubah warna sesuai kebutuhan Anda */
 }
-
 
 @keyframes rareEffect {
-  0% {
-    background-position: 0% 0%; /* Posisi awal gradient */
-  }
-  100% {
-    background-position: 0% 100%; /* Posisi akhir gradient */
-  }
+    0% {
+        background-position: 0% 0%; /* Posisi awal gradient */
+    }
+    100% {
+        background-position: 0% 100%; /* Posisi akhir gradient */
+    }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.5s ease-out forwards;
 }
-
-

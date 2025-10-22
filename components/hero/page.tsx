@@ -32,7 +32,7 @@ const Hero = () => {
 
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
-    null
+    null,
   );
   const [isLoading, setIsLoading] = useState(true);
   const [prayerSchedule, setPrayerSchedule] = useState<any>(null);
@@ -43,14 +43,14 @@ const Hero = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        "https://api.myquran.com/v2/sholat/kota/semua"
+        "https://api.myquran.com/v2/sholat/kota/semua",
       );
       const data = await response.json();
       const formattedLocations = data.data.map(
         (location: { id: string; lokasi: string }) => ({
           value: location.id,
           label: location.lokasi,
-        })
+        }),
       );
       setLocations(formattedLocations);
       return formattedLocations;
@@ -116,9 +116,9 @@ const Hero = () => {
                 }
                 reject(new Error(errorMessage));
               },
-              options
+              options,
             );
-          }
+          },
         );
 
         const normalizeString = (str: string): string => {
@@ -134,7 +134,7 @@ const Hero = () => {
         const { latitude, longitude } = position.coords;
         try {
           const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}&language=id`
+            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}&language=id`,
           );
 
           if (!response.ok) {
@@ -154,7 +154,7 @@ const Hero = () => {
 
           // Fungsi untuk mencari lokasi berdasarkan beberapa kriteria
           const findLocation = (
-            searchTerms: string[]
+            searchTerms: string[],
           ): Location | undefined => {
             return locations.find((loc) => {
               const normalizedLocationLabel = normalizeString(loc.label);
@@ -199,12 +199,12 @@ const Hero = () => {
               `Lokasi terdeteksi: ${matchedLocation.label} (${detectedLocation})`,
               {
                 duration: 4000,
-              }
+              },
             );
           } else {
             toast.error(
               "Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia",
-              { duration: 4000 }
+              { duration: 4000 },
             );
             setSelectedLocation(locations[50]); // Default location
           }
@@ -229,7 +229,7 @@ const Hero = () => {
         console.error("Geolocation Error:", error);
         toast.error(
           error instanceof Error ? error.message : "Gagal mendeteksi lokasi",
-          { duration: 4000 }
+          { duration: 4000 },
         );
         setSelectedLocation(locations[50]);
       }
@@ -284,7 +284,7 @@ const Hero = () => {
     }
 
     const formattedTime = `${formatTime(currentTime.getHours())}:${formatTime(
-      currentTime.getMinutes()
+      currentTime.getMinutes(),
     )}:${formatTime(currentTime.getSeconds())}`;
 
     const timeZoneInfo = `UTC+${offsetHours} | ${formattedTime} ${timeZone}`;
@@ -320,14 +320,14 @@ const Hero = () => {
 
           <p
             className="
-          bg-gradient-to-r 
-          from-[#4f772d] 
-          to-[#aad576] 
-          inline-block 
+          bg-gradient-to-r
+          from-[#4f772d]
+          to-[#aad576]
+          inline-block
           kahlil
           text-[8rem]
           max-[640px]:text-[5.5rem]
-          text-transparent 
+          text-transparent
           bg-clip-text
           drop-shadow-xl
           leading-[7rem]
@@ -355,7 +355,7 @@ const Hero = () => {
             />
           </div>
           <p
-            className="poppins-medium 
+            className="poppins-medium
         mt-8 max-[640px]:text-[13px] w-[36rem] max-[640px]:w-[18rem]"
             data-aos="fade-up"
             data-aos-delay="1400"
@@ -373,10 +373,10 @@ const Hero = () => {
             Baihaqi).
           </p>
           <div
-            className="mt-5 
-        space-x-2 
-        max-[640px]:grid-cols-2 
-        max-[640px]:grid 
+            className="mt-5
+        space-x-2
+        max-[640px]:grid-cols-2
+        max-[640px]:grid
         max-[640px]:space-x-0
         max-[640px]:gap-4
         max-[640px]:justify-center
@@ -452,7 +452,7 @@ const Hero = () => {
               </p>
             </div>
 
-            {/* Right side - Weather 
+            {/* Right side - Weather
             <div className="flex-1 p-4 text-center">
               <p className="text-xl max-[640px]:text-lg opensans">-</p>
             </div> */}
