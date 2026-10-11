@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import Select from "react-select";
+import Select, { StylesConfig } from "react-select";
 import Textra from "react-textra";
 import Image from "next/image";
 import AOS from "aos";
@@ -24,9 +24,82 @@ export const config: Config = {
   opencageApiKey: process.env.NEXT_PUBLIC_OPENCAGE_API_KEY || "",
 };
 
+const quickLinks = [
+  { href: "/niat", label: "Awas Lupa Niat", delay: 1.5 },
+  { href: "/tadarus", label: "Awas Lupa Tadarus", delay: 2 },
+  { href: "/resep", label: "Awas Lupa Masak", delay: 2.5 },
+];
+
+const mainTimes = [
+  { key: "imsak", label: "Imsak", delay: 1400 },
+  { key: "maghrib", label: "Maghrib", delay: 2000 },
+];
+
+const otherTimes = [
+  { key: "subuh", label: "Subuh", delay: 1500 },
+  { key: "terbit", label: "Terbit", delay: 1600 },
+  { key: "dhuha", label: "Dhuha", delay: 1700 },
+  { key: "dzuhur", label: "Dzuhur", delay: 1800 },
+  { key: "ashar", label: "Ashar", delay: 1900 },
+  { key: "isya", label: "Isya", delay: 2100 },
+];
+
+const selectStyles: StylesConfig<Location, false> = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: 46,
+    borderRadius: 14,
+    background: "rgba(255,255,255,0.05)",
+    borderColor: state.isFocused
+      ? "rgba(170,213,118,0.6)"
+      : "rgba(255,255,255,0.12)",
+    boxShadow: state.isFocused ? "0 0 0 3px rgba(170,213,118,0.15)" : "none",
+    opacity: state.isDisabled ? 0.6 : 1,
+    cursor: "text",
+    ":hover": { borderColor: "rgba(170,213,118,0.4)" },
+  }),
+  singleValue: (base) => ({ ...base, color: "#fff" }),
+  input: (base) => ({ ...base, color: "#fff" }),
+  placeholder: (base) => ({ ...base, color: "rgba(255,255,255,0.55)" }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    background: "rgba(255,255,255,0.12)",
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "rgba(255,255,255,0.5)",
+    ":hover": { color: "#fff" },
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    color: "rgba(255,255,255,0.5)",
+    ":hover": { color: "#fff" },
+  }),
+  menu: (base) => ({
+    ...base,
+    background: "#0d1811",
+    border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 14,
+    overflow: "hidden",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+  }),
+  option: (base, state) => ({
+    ...base,
+    color: "#fff",
+    cursor: "pointer",
+    background: state.isSelected
+      ? "#3a5a25"
+      : state.isFocused
+        ? "rgba(170,213,118,0.12)"
+        : "transparent",
+    ":active": { background: "rgba(170,213,118,0.2)" },
+  }),
+  noOptionsMessage: (base) => ({ ...base, color: "rgba(255,255,255,0.6)" }),
+};
+
 const Hero = () => {
   useEffect(() => {
-    AOS.init();
+    AOS.init({ offset: 0 });
     AOS.refresh();
   }, []);
 
@@ -39,7 +112,6 @@ const Hero = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [localTimeZone, setLocalTimeZone] = useState("");
 
-  // Fungsi untuk mengambil data lokasi dari API
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -56,7 +128,7 @@ const Hero = () => {
       return formattedLocations;
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Gagal mengambil data lokasi");
+      toast.error("Gagal mengambil data lokasi", { id: "lokasi-gagal" });
       return [];
     }
   };
@@ -149,10 +221,9 @@ const Hero = () => {
           const locationDetail = data.results[0].components;
           const regency = locationDetail.regency;
           const city = locationDetail.city;
-          const county = locationDetail.county; // Tambahan untuk kabupaten
-          const state = locationDetail.state; // Tambahan untuk provinsi
+          const county = locationDetail.county;
+          const state = locationDetail.state;
 
-          // Fungsi untuk mencari lokasi berdasarkan beberapa kriteria
           const findLocation = (
             searchTerms: string[],
           ): Location | undefined => {
@@ -168,7 +239,6 @@ const Hero = () => {
             });
           };
 
-          // Urutan pencarian berdasarkan prioritas
           let matchedLocation: Location | undefined;
           let detectedLocation = "";
 
@@ -187,7 +257,6 @@ const Hero = () => {
             detectedLocation = county;
           }
 
-          // Fallback ke provinsi jika tidak ada yang cocok
           if (!matchedLocation && state) {
             matchedLocation = findLocation([state]);
             detectedLocation = state;
@@ -198,18 +267,18 @@ const Hero = () => {
             toast.success(
               `Lokasi terdeteksi: ${matchedLocation.label} (${detectedLocation})`,
               {
+                id: "lokasi-terdeteksi",
                 duration: 4000,
               },
             );
           } else {
             toast.error(
               "Lokasi terdeteksi tetapi tidak ada dalam daftar yang tersedia",
-              { duration: 4000 },
+              { id: "lokasi-tidak-ada", duration: 4000 },
             );
             setSelectedLocation(locations[50]); // Default location
           }
 
-          // Log untuk debugging
           console.log("Detail Lokasi:", {
             regency,
             city,
@@ -221,6 +290,7 @@ const Hero = () => {
         } catch (apiError) {
           console.error("API Error:", apiError);
           toast.error("Gagal mengambil detail lokasi dari server", {
+            id: "lokasi-server",
             duration: 4000,
           });
           setSelectedLocation(locations[50]);
@@ -229,12 +299,15 @@ const Hero = () => {
         console.error("Geolocation Error:", error);
         toast.error(
           error instanceof Error ? error.message : "Gagal mendeteksi lokasi",
-          { duration: 4000 },
+          { id: "lokasi-geolocation", duration: 4000 },
         );
         setSelectedLocation(locations[50]);
       }
     } else {
-      toast.error("Browser tidak mendukung geolocation", { duration: 4000 });
+      toast.error("Browser tidak mendukung geolocation", {
+        id: "lokasi-browser",
+        duration: 4000,
+      });
       setSelectedLocation(locations[50]);
     }
     setIsLoading(false);
@@ -299,46 +372,34 @@ const Hero = () => {
   return (
     <div className="bodi-hero">
       {/*<RamadhanCountdown />*/}
-      <div className="px-[3.5rem] py-[1rem] flex max-[640px]:flex-col max-[640px]:py-[2rem] max-[640px]:space-y-10 justify-between items-center min-h-screen">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-[1400px] flex-col justify-center gap-4 px-4 py-4 sm:gap-8 sm:px-8 sm:py-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:px-14 lg:py-4">
         <Toaster position="top-left" reverseOrder={false} />
-        <div className="flex flex-col">
+
+        <div className="flex flex-col lg:w-[52%]">
           <Image
             src="/img/bunderan.png"
             sizes="100vw"
-            style={{
-              width: "30%",
-              height: "auto",
-            }}
+            style={{ width: "auto" }}
             width={250}
             height={250}
             alt="lantern"
-            className="rounded-3xl max-[640px]:mb-5"
+            className="h-11 self-start sm:h-16 lg:h-[clamp(3.5rem,11vh,6rem)]"
             data-aos="fade-up"
             data-aos-delay="800"
             data-aos-duration="1000"
           />
 
-          <p
-            className="
-          bg-gradient-to-r
-          from-[#4f772d]
-          to-[#aad576]
-          inline-block
-          kahlil
-          text-[8rem]
-          max-[640px]:text-[5.5rem]
-          text-transparent
-          bg-clip-text
-          drop-shadow-xl
-          leading-[7rem]
-          max-[640px]:leading-[4.5rem]"
+          <h1
+            className="kahlil inline-block w-fit bg-gradient-to-r from-[#4f772d] to-[#aad576] bg-clip-text pb-2 text-[length:min(19vw,5rem)] leading-[0.95] text-transparent drop-shadow-xl sm:text-[length:min(14vw,7rem)] lg:text-[length:clamp(4rem,min(8vw,17vh),8rem)]"
             data-aos="fade-up"
             data-aos-delay="1000"
             data-aos-duration="1000"
           >
             Awas Imsak!
-          </p>
+          </h1>
+
           <div
+            className="mt-1 min-h-[2.5rem] sm:mt-3 sm:min-h-[1.75rem]"
             data-aos="fade-up"
             data-aos-delay="1200"
             data-aos-duration="1000"
@@ -351,70 +412,49 @@ const Hero = () => {
                 "Masa puasa 30 hari doang ga bisa sih bang?",
                 "Awas Imsak! Puasa Tenang, Hati Gembirang.",
               ]}
-              className="opensans text-[15px] mt-5"
+              className="opensans text-sm font-semibold text-[#cfe3bd] sm:text-[15px]"
             />
           </div>
-          <p
-            className="poppins-medium
-        mt-8 max-[640px]:text-[13px] w-[36rem] max-[640px]:w-[18rem]"
+
+          <div
+            className="poppins-medium mt-3 max-w-[34rem] border-l-2 border-[#c9a45c]/40 pl-4 text-[12px] leading-relaxed text-white/80 sm:mt-6 sm:text-sm"
             data-aos="fade-up"
             data-aos-delay="1400"
             data-aos-duration="1000"
           >
-            Rasulullah saw bersabda:
-            <br />
-            <br />
-            ثَلَاثُ دَعَوَاتٍ مُسْتَجَابَاتٍ ؛دَعْوَةُ الصَّائِمِ وَدَعْوَةُ
-            الْمُسَافِرِ وَدَعْوَةُ الْمَظْلُوْمِ
-            <br />
-            <br />
-            Artinya: Ada tiga macam doa yang mustajab, yaitu doa orang yang
-            sedang puasa, doa musafir, dan doa orang yang teraniaya (HR
-            Baihaqi).
-          </p>
-          <div
-            className="mt-5
-        space-x-2
-        max-[640px]:grid-cols-2
-        max-[640px]:grid
-        max-[640px]:space-x-0
-        max-[640px]:gap-4
-        max-[640px]:justify-center
-        max-[640px]:text-[13px]"
-          >
-            <Link href="/niat">
-              <motion.button
-                className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow "
-                initial={{ opacity: 0, x: -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.5, duration: 1 }}
-              >
-                Awas Lupa Niat
-              </motion.button>
-            </Link>
-            <Link href="/tadarus">
-              <motion.button
-                className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-                initial={{ opacity: 0, x: -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2, duration: 1 }}
-              >
-                Awas Lupa Tadarus
-              </motion.button>
-            </Link>
-            <Link href="/resep">
-              <motion.button
-                className="bg-[#0d1811] border border-[#3e664e] hover:border-[#2b4733] transition-colors text-white rounded-full px-5 w-auto h-10 active-box active-shadow"
-                initial={{ opacity: 0, x: -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2.5, duration: 1 }}
-              >
-                Awas Lupa Masak
-              </motion.button>
-            </Link>
+            <p className="text-white/60">Rasulullah saw bersabda:</p>
+            <p
+              dir="rtl"
+              lang="ar"
+              className="my-2 text-base leading-[1.8] text-[#e3c783] sm:text-[1.35rem] sm:leading-[1.9]"
+            >
+              ثَلَاثُ دَعَوَاتٍ مُسْتَجَابَاتٍ ؛دَعْوَةُ الصَّائِمِ وَدَعْوَةُ
+              الْمُسَافِرِ وَدَعْوَةُ الْمَظْلُوْمِ
+            </p>
+            <p>
+              Artinya: Ada tiga macam doa yang mustajab, yaitu doa orang yang
+              sedang puasa, doa musafir, dan doa orang yang teraniaya (HR
+              Baihaqi).
+            </p>
           </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
+            {quickLinks.map(({ href, label, delay }) => (
+              <Link key={href} href={href} className="block">
+                <motion.button
+                  className="active-box active-shadow h-10 w-full rounded-full border border-white/15 bg-white/5 px-2 text-[11px] leading-tight text-white transition-colors hover:border-[#aad576]/60 hover:bg-[#aad576]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#aad576] sm:h-10 sm:w-auto sm:whitespace-nowrap sm:px-5 sm:text-sm"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay, duration: 1 }}
+                >
+                  {label}
+                </motion.button>
+              </Link>
+            ))}
+          </div>
+
           <motion.div
-            className="mt-3"
+            className="mt-3 sm:mt-4"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{
@@ -423,55 +463,58 @@ const Hero = () => {
               type: "spring",
             }}
           >
-            <p className="text-[12px] italic">
+            <p className="text-[11px] italic text-white/60">
               © {new Date().getFullYear()}{" "}
               <Link
                 href="https://github.com/klawcodes"
                 rel="noopener noreferrer"
                 target="_blank"
-                className=""
+                className="hover:text-white hover:underline"
               >
-                {" "}
-                EINCLAIR Innovations Team{" "}
+                Commonly Works
               </Link>
             </p>
           </motion.div>
         </div>
 
-        <div className="flex flex-col w-[50rem] max-[640px]:w-[20rem]">
+        <div
+          className="flex w-full flex-col rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] backdrop-blur-md sm:p-6 lg:w-[44%] lg:max-w-[40rem]"
+          data-aos="fade-up"
+          data-aos-delay="800"
+          data-aos-duration="1000"
+        >
           <div
-            className="flex mb-5 border border-[#0d2818] rounded-full bg-[#0d1811] overflow-hidden"
+            className="mb-3 flex items-center justify-center gap-2.5 rounded-full border border-white/10 bg-black/20 px-4 py-2 sm:mb-4 sm:py-2.5"
             data-aos="fade-up"
             data-aos-delay="1000"
             data-aos-duration="1000"
           >
-            {/* Left side - Timezone */}
-            <div className="flex-1 p-4 text-center border-r border-[#0d2818]">
-              <p className="text-xl max-[640px]:text-lg opensans">
-                {localTimeZone}
-              </p>
-            </div>
-
-            {/* Right side - Weather
-            <div className="flex-1 p-4 text-center">
-              <p className="text-xl max-[640px]:text-lg opensans">-</p>
-            </div> */}
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#aad576] opacity-60 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#aad576]" />
+            </span>
+            <p className="opensans text-base font-semibold tabular-nums sm:text-lg">
+              {localTimeZone}
+            </p>
           </div>
-          <h1
-            className="text-2xl poppins-extrabold mb-4 max-[640px]:text-lg"
+
+          <label
+            htmlFor="wilayah"
+            className="poppins-extrabold mb-1.5 text-base sm:mb-2"
             data-aos="fade-up"
             data-aos-delay="1100"
             data-aos-duration="1000"
           >
             Pilih Wilayah:
-          </h1>
+          </label>
           <div
             data-aos="fade-up"
             data-aos-delay="1200"
             data-aos-duration="1000"
-            className="z-[999]"
+            className="relative z-[999] mb-3 sm:mb-4"
           >
             <Select
+              inputId="wilayah"
               options={locations}
               value={selectedLocation}
               onChange={handleLocationChange}
@@ -480,105 +523,75 @@ const Hero = () => {
               }
               isDisabled={isLoading}
               isClearable
-              className="poppins-regular mb-4 hover:cursor-text text-black"
+              styles={selectStyles}
+              menuPlacement="auto"
+              maxMenuHeight={220}
+              className="poppins-regular"
             />
           </div>
+
           {prayerSchedule && (
-            <div className="poppins-regular text-[20px]">
-              <div className="flex justify-between">
+            <div className="poppins-regular">
+              <div className="mb-3 flex justify-between gap-4 sm:mb-4">
                 <div
-                  className="flex flex-col mb-5 max-[640px]:text-lg"
+                  className="flex min-w-0 flex-col"
                   data-aos="fade-up"
                   data-aos-delay="1300"
                   data-aos-duration="1000"
                 >
-                  <span className="font-semibold">Wilayah:</span>
-                  <span>{selectedLocation && selectedLocation.label}</span>
+                  <span className="text-xs text-white/60">Wilayah:</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    {selectedLocation && selectedLocation.label}
+                  </span>
                 </div>
                 <div
-                  className="flex flex-col mb-5 max-[640px]:text-lg"
+                  className="flex flex-col text-right"
                   data-aos="fade-up"
                   data-aos-delay="1400"
                   data-aos-duration="1000"
                 >
-                  <span className="font-semibold">Hari / Tanggal:</span>
-                  <span>{prayerSchedule.tanggal}</span>
+                  <span className="text-xs text-white/60">Hari / Tanggal:</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    {prayerSchedule.tanggal}
+                  </span>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 max-[640px]:grid-cols-2">
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-box active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1400"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Imsak:</span>
-                  <span>{prayerSchedule.imsak}</span>
-                </div>
 
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1500"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Subuh:</span>
-                  <span>{prayerSchedule.subuh}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1600"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Terbit:</span>
-                  <span>{prayerSchedule.terbit}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1700"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Dhuha:</span>
-                  <span>{prayerSchedule.dhuha}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1800"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Dzuhur:</span>
-                  <span>{prayerSchedule.dzuhur}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="1900"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Ashar:</span>
-                  <span>{prayerSchedule.ashar}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-box active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="2000"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Maghrib:</span>
-                  <span>{prayerSchedule.maghrib}</span>
-                </div>
-                <div
-                  className="flex flex-col border border-[#0d2818] p-4 rounded-md active-shadow max-[640px]:text-lg"
-                  data-aos="fade-up"
-                  data-aos-delay="2100"
-                  data-aos-duration="1000"
-                >
-                  <span className="font-semibold">Isya:</span>
-                  <span>{prayerSchedule.isya}</span>
-                </div>
+              {/* Imsak dan Maghrib dipisah karena menandai awal dan akhir puasa. */}
+              <div className="mb-2 grid grid-cols-2 gap-2 sm:mb-3 sm:gap-3">
+                {mainTimes.map(({ key, label, delay }) => (
+                  <div
+                    key={key}
+                    className="active-box active-shadow flex flex-col rounded-2xl border border-[#aad576]/25 bg-[#aad576]/10 px-4 py-2.5 sm:py-4"
+                    data-aos="fade-up"
+                    data-aos-delay={delay}
+                    data-aos-duration="1000"
+                  >
+                    <span className="text-sm font-semibold text-[#cfe3bd] sm:text-base">
+                      {label}:
+                    </span>
+                    <span className="text-3xl font-extrabold tabular-nums sm:text-4xl">
+                      {prayerSchedule[key]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3 lg:gap-2">
+                {otherTimes.map(({ key, label, delay }) => (
+                  <div
+                    key={key}
+                    className="active-shadow flex flex-col rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 sm:py-3"
+                    data-aos="fade-up"
+                    data-aos-delay={delay}
+                    data-aos-duration="1000"
+                  >
+                    <span className="text-xs text-white/60">{label}:</span>
+                    <span className="text-base font-semibold tabular-nums sm:text-lg">
+                      {prayerSchedule[key]}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
