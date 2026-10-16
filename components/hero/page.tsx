@@ -5,6 +5,7 @@ import Link from "next/link";
 import Select, { StylesConfig } from "react-select";
 import Textra from "react-textra";
 import Image from "next/image";
+import { Onest } from "next/font/google";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { motion } from "framer-motion";
@@ -12,6 +13,12 @@ import { Toaster, toast } from "react-hot-toast";
 import Notification from "../notification/page";
 import Weather from "../weather/page";
 import RamadhanCountdown from "../ramadhanCountdown/page";
+
+const onest = Onest({
+  subsets: ["latin"],
+  weight: "700",
+  display: "swap",
+});
 
 interface Location {
   value: string;
@@ -376,30 +383,33 @@ const Hero = () => {
         <Toaster position="top-left" reverseOrder={false} />
 
         <div className="flex flex-col lg:w-[52%]">
-          <Image
-            src="/img/bunderan.png"
-            sizes="100vw"
-            style={{ width: "auto" }}
-            width={250}
-            height={250}
-            alt="lantern"
-            className="h-11 self-start sm:h-16 lg:h-[clamp(3.5rem,11vh,6rem)]"
-            data-aos="fade-up"
-            data-aos-delay="800"
-            data-aos-duration="1000"
-          />
+          {/* Ikon + judul: vertikal & center di mobile, berdampingan di desktop */}
+          <div className="flex flex-col items-center gap-2 lg:flex-row lg:items-center lg:gap-5">
+            <Image
+              src="/img/icon-app.png"
+              width={512}
+              height={512}
+              priority
+              alt="Ikon Awas Imsak"
+              className="h-20 w-20 shrink-0 object-contain sm:h-28 sm:w-28 lg:h-[clamp(8rem,28vh,14rem)] lg:w-[clamp(8rem,28vh,14rem)]"
+              data-aos="fade-up"
+              data-aos-delay="800"
+              data-aos-duration="1000"
+            />
 
-          <h1
-            className="kahlil inline-block w-fit bg-gradient-to-r from-[#4f772d] to-[#aad576] bg-clip-text pb-2 text-[length:min(19vw,5rem)] leading-[0.95] text-transparent drop-shadow-xl sm:text-[length:min(14vw,7rem)] lg:text-[length:clamp(4rem,min(8vw,17vh),8rem)]"
-            data-aos="fade-up"
-            data-aos-delay="1000"
-            data-aos-duration="1000"
-          >
-            Awas Imsak!
-          </h1>
+            <h1
+              className={`${onest.className} text-center text-[length:min(13vw,3.25rem)] leading-[0.9] tracking-tight text-white drop-shadow-xl sm:text-[length:min(11vw,4.5rem)] lg:text-left lg:text-[length:clamp(3.5rem,min(7.5vw,15vh),7.5rem)]`}
+              data-aos="fade-up"
+              data-aos-delay="1000"
+              data-aos-duration="1000"
+            >
+              Awas <br className="hidden lg:block" />
+              Imsak!
+            </h1>
+          </div>
 
           <div
-            className="mt-1 min-h-[2.5rem] sm:mt-3 sm:min-h-[1.75rem]"
+            className="mt-3 min-h-[2.5rem] text-center sm:mt-4 sm:min-h-[1.75rem] lg:text-left"
             data-aos="fade-up"
             data-aos-delay="1200"
             data-aos-duration="1000"
@@ -442,7 +452,7 @@ const Hero = () => {
             {quickLinks.map(({ href, label, delay }) => (
               <Link key={href} href={href} className="block">
                 <motion.button
-                  className="active-box active-shadow h-10 w-full rounded-full border border-white/15 bg-white/5 px-2 text-[11px] leading-tight text-white transition-colors hover:border-[#aad576]/60 hover:bg-[#aad576]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#aad576] sm:h-10 sm:w-auto sm:whitespace-nowrap sm:px-5 sm:text-sm"
+                  className="active-box active-shadow h-10 w-full rounded-full border border-white/15 bg-black/60 px-2 text-[11px] leading-tight text-white transition-colors hover:border-[#aad576]/60 hover:bg-[#aad576]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#aad576] sm:h-10 sm:w-auto sm:whitespace-nowrap sm:px-5 sm:text-sm"
                   initial={{ opacity: 0, x: -100 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay, duration: 1 }}
@@ -466,7 +476,7 @@ const Hero = () => {
             <p className="text-[11px] italic text-white/60">
               © {new Date().getFullYear()}{" "}
               <Link
-                href="https://github.com/klawcodes"
+                href="https://commonly.riotrevenger.xyz"
                 rel="noopener noreferrer"
                 target="_blank"
                 className="hover:text-white hover:underline"
@@ -484,7 +494,7 @@ const Hero = () => {
           data-aos-duration="1000"
         >
           <div
-            className="mb-3 flex items-center justify-center gap-2.5 rounded-full border border-white/10 bg-black/20 px-4 py-2 sm:mb-4 sm:py-2.5"
+            className="mb-3 flex items-center justify-center gap-2.5 rounded-full border border-white/10 bg-black/40 px-4 py-2 sm:mb-4 sm:py-2.5"
             data-aos="fade-up"
             data-aos-delay="1000"
             data-aos-duration="1000"
@@ -562,12 +572,12 @@ const Hero = () => {
                 {mainTimes.map(({ key, label, delay }) => (
                   <div
                     key={key}
-                    className="active-box active-shadow flex flex-col rounded-2xl border border-[#aad576]/25 bg-[#aad576]/10 px-4 py-2.5 sm:py-4"
+                    className="active-box active-shadow flex flex-col rounded-2xl border border-white/10 bg-black/60 px-4 py-2.5 sm:py-4"
                     data-aos="fade-up"
                     data-aos-delay={delay}
                     data-aos-duration="1000"
                   >
-                    <span className="text-sm font-semibold text-[#cfe3bd] sm:text-base">
+                    <span className="text-sm font-semibold text-white sm:text-base">
                       {label}:
                     </span>
                     <span className="text-3xl font-extrabold tabular-nums sm:text-4xl">

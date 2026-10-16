@@ -3,10 +3,20 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import StarryBackground from "@/components/star/page";
 
+const siteUrl = "https://awasimsak.vercel.app";
+const siteTitle = "Awas Imsak! - Jadwal Sholat & Imsak";
+const siteDescription =
+  "Awas Imsak! adalah portal yang menghadirkan jadwal sholat dan imsak dengan akurat dan mudah diakses";
+
 export const metadata: Metadata = {
-  title: "Awas Imsak! - Jadwal Sholat & Imsak",
-  description:
-    "Awas Imsak! adalah portal yang menghadirkan jadwal sholat dan imsak dengan akurat dan mudah diakses",
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  alternates: { canonical: "/" },
+  verification: {
+    // Isi lewat env var GOOGLE_SITE_VERIFICATION (kode dari Search Console)
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
   applicationName: "Awas Imsak!",
   manifest: "/site.webmanifest",
   icons: {
@@ -39,8 +49,8 @@ export const metadata: Metadata = {
     "bulan ramadhan",
   ],
   authors: [
-    { name: "Klaw" },
-    { name: "Muhammad Dimas", url: "https://klaw.my.id" },
+    { name: "RIOT REVENGER" },
+    { name: "Muhammad Dimas", url: "https://riotrevenger.xyz" },
   ],
   creator: "Commonly Works",
   publisher: "RIOT REVENGER",
@@ -50,12 +60,24 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Awas Imsak! - Jadwal Sholat & Imsak",
-    description:
-      "Awas Imsak! adalah portal yang menghadirkan jadwal sholat dan imsak dengan akurat dan mudah diakses",
-    url: "https://imsak.my.id",
+    title: siteTitle,
+    description: siteDescription,
+    url: siteUrl,
     siteName: "Awas Imsak!",
+    locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "/img/twt-link.png",
+        alt: "Awas Imsak! - Jadwal Sholat & Imsak",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/img/twt-link.png"],
   },
 };
 
