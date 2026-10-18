@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useMemo, useState } from "react";
 import AnalogClock from "./AnalogClock";
 import { pickRandomMosqueImage } from "./mosqueImages";
 import type { Location } from "./selectStyles";
@@ -148,13 +147,13 @@ function AlarmIcon() {
         cy="26"
         r="15"
         fill="none"
-        stroke="currentColor"
+        stroke="#fff"
         strokeWidth="3"
       />
       <path
         d="M24 17v10l6 4M7 12l7-6M41 12l-7-6M10 41l4-4M38 41l-4-4"
         fill="none"
-        stroke="currentColor"
+        stroke="#fff"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -337,19 +336,12 @@ export default function MasjidTV({
               </h1>
               <p
                 className="truncate"
-                style={{
-                  fontSize: "2.1vh",
-                  marginTop: "0.6vh",
-                  color: t.subText,
-                }}
+                style={{ fontSize: "2.1vh", marginTop: "0.6vh", color: t.subText }}
               >
                 {location.label}
               </p>
             </div>
-            <div
-              className="shrink-0"
-              style={{ width: "10.5vh", height: "10.5vh" }}
-            >
+            <div className="shrink-0" style={{ width: "10.5vh", height: "10.5vh" }}>
               <MosqueBadge t={t} />
             </div>
           </div>
@@ -535,7 +527,14 @@ export default function MasjidTV({
         </div>
 
         {/* ====== Layar adzan: hitung mundur 5 menit ====== */}
-        <AdzanTransition t={t} adzan={adzan} now={now} />
+        {adzan && (
+          <AdzanScreen
+            t={t}
+            label={adzan.label}
+            delta={adzan.delta}
+            year={now.getFullYear()}
+          />
+        )}
       </div>
 
       {/* Kontrol: muncul saat kursor diarahkan ke pojok kiri bawah */}
@@ -563,263 +562,29 @@ export default function MasjidTV({
   );
 }
 
-/* ---------- Zona waktu perangkat: WIB / WITA / WIT ---------- */
-function tzLabel(d: Date): string {
-  const h = -d.getTimezoneOffset() / 60;
-  if (h === 7) return "WIB";
-  if (h === 8) return "WITA";
-  if (h === 9) return "WIT";
-  return `UTC${h >= 0 ? "+" : ""}${h}`;
-}
-
-type AdzanInfo = { label: string; delta: number };
-
-const CURTAIN_CLOSE = 0.9;
-const CURTAIN_OPEN = 1.1;
-const CURTAIN_EASE = "power3.inOut";
-
-/**
- * Pembungkus layar adzan dengan transisi tirai (GSAP).
- *
- * Masuk : tirai menutup dari kiri & kanan -> layar adzan diganti di balik
- *         tirai -> tirai membuka, isi layar muncul bertahap.
- * Keluar: isi layar memudar -> tirai menutup -> layar adzan dilepas ->
- *         tirai membuka dan tampilan TV muncul kembali.
- *
- * Komponen tetap ter-mount selama animasi keluar berlangsung, dan memakai
- * data adzan terakhir supaya layar tidak berubah isi saat tirai menutup.
- */
-function AdzanTransition({
-  t,
-  adzan,
-  now,
-}: {
-  t: ThemeTokens;
-  adzan: AdzanInfo | null;
-  now: Date;
-}) {
-  const [mounted, setMounted] = useState(false);
-  const lastRef = useRef<AdzanInfo | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const phaseRef = useRef<"hidden" | "in" | "shown" | "out">("hidden");
-
-  const active = adzan !== null;
-  if (adzan) lastRef.current = adzan;
-  const data = adzan ?? lastRef.current;
-
-  const open = (i: number) => (i === 0 ? -101 : 101);
-
-  const playIn = () => {
-    const c = contentRef.current;
-    const l = leftRef.current;
-    const r = rightRef.current;
-    if (!c || !l || !r) return;
-    tlRef.current?.kill();
-    phaseRef.current = "in";
-
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const items = c.querySelectorAll<HTMLElement>("[data-anim]");
-    const frames = c.querySelectorAll<HTMLElement>("[data-frame]");
-    const tl = gsap.timeline({
-      onComplete: () => {
-        phaseRef.current = "shown";
-      },
-    });
-
-    if (reduce) {
-      gsap.set([l, r], { xPercent: open });
-      tl.to(c, { autoAlpha: 1, duration: 0.4 });
-    } else {
-      tl.to([l, r], {
-        xPercent: 0,
-        duration: CURTAIN_CLOSE,
-        ease: CURTAIN_EASE,
-      })
-        .set(c, { autoAlpha: 1 })
-        .set(items, { autoAlpha: 0, y: 40 })
-        .set(frames, { autoAlpha: 0, scale: 1.05 })
-        .to(
-          [l, r],
-          { xPercent: open, duration: CURTAIN_OPEN, ease: CURTAIN_EASE },
-          "+=0.15",
-        )
-        .to(
-          frames,
-          { autoAlpha: 1, scale: 1, duration: 1.2, ease: "power2.out" },
-          "<0.3",
-        )
-        .to(
-          items,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            stagger: 0.12,
-          },
-          "<0.1",
-        );
-    }
-    tlRef.current = tl;
-  };
-
-  const playOut = () => {
-    const c = contentRef.current;
-    const l = leftRef.current;
-    const r = rightRef.current;
-    if (!c || !l || !r) return;
-    tlRef.current?.kill();
-    phaseRef.current = "out";
-
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const items = c.querySelectorAll<HTMLElement>("[data-anim]");
-    const tl = gsap.timeline({
-      onComplete: () => {
-        phaseRef.current = "hidden";
-        lastRef.current = null;
-        setMounted(false);
-      },
-    });
-
-    if (reduce) {
-      tl.to(c, { autoAlpha: 0, duration: 0.4 });
-    } else {
-      tl.to(items, {
-        autoAlpha: 0,
-        y: -24,
-        duration: 0.45,
-        ease: "power2.in",
-        stagger: 0.05,
-      })
-        .to(
-          [l, r],
-          { xPercent: 0, duration: CURTAIN_CLOSE, ease: CURTAIN_EASE },
-          "-=0.25",
-        )
-        .set(c, { autoAlpha: 0 })
-        .to(
-          [l, r],
-          { xPercent: open, duration: CURTAIN_OPEN, ease: CURTAIN_EASE },
-          "+=0.15",
-        );
-    }
-    tlRef.current = tl;
-  };
-
-  useLayoutEffect(() => {
-    if (!mounted) {
-      if (active) setMounted(true);
-      return;
-    }
-    const phase = phaseRef.current;
-    if (active && phase !== "in" && phase !== "shown") playIn();
-    else if (!active && (phase === "in" || phase === "shown")) playOut();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted, active]);
-
-  useEffect(() => () => void tlRef.current?.kill(), []);
-
-  if (!mounted || !data) return null;
-
-  const curtainFolds =
-    "repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0, rgba(0,0,0,0.16) 1.4vh, rgba(255,255,255,0.07) 1.4vh, rgba(255,255,255,0.07) 2.8vh)";
-  const curtainBase = (side: "left" | "right") =>
-    ({
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      [side]: 0,
-      width: "50.3%",
-      backgroundImage: `${curtainFolds}, ${t.pillIconBg}`,
-      [side === "left" ? "borderRight" : "borderLeft"]: "0.6vh solid #e3c783",
-      boxShadow:
-        side === "left"
-          ? "1.4vh 0 4vh rgba(0,0,0,0.45)"
-          : "-1.4vh 0 4vh rgba(0,0,0,0.45)",
-      transform: `translateX(${side === "left" ? "-101%" : "101%"})`,
-      willChange: "transform",
-    }) as React.CSSProperties;
-
-  return (
-    <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
-      <div
-        ref={contentRef}
-        className="absolute inset-0"
-        style={{ visibility: "hidden", opacity: 0 }}
-      >
-        <AdzanScreen t={t} label={data.label} delta={data.delta} now={now} />
-      </div>
-      <div ref={leftRef} style={curtainBase("left")} />
-      <div ref={rightRef} style={curtainBase("right")} />
-    </div>
-  );
-}
-
-function TimerLabel({
-  time,
-  color,
-  clip,
-}: {
-  time: string;
-  color: string;
-  clip?: string;
-}) {
-  return (
-    <div
-      className="absolute inset-0 flex items-center justify-center gap-[1.6vh]"
-      style={{
-        color,
-        clipPath: clip,
-        transition: clip ? "clip-path 1s linear" : undefined,
-      }}
-    >
-      <span style={{ width: "6.6vh", height: "6.6vh" }}>
-        <AlarmIcon />
-      </span>
-      <span
-        className="tabular-nums font-extrabold"
-        style={{ fontSize: "7.4vh", lineHeight: 1 }}
-      >
-        {time}
-      </span>
-    </div>
-  );
-}
-
 function AdzanScreen({
   t,
   label,
   delta,
-  now,
+  year,
 }: {
   t: ThemeTokens;
   label: string;
   delta: number;
-  now: Date;
+  year: number;
 }) {
   const started = delta <= 0;
   const secs = Math.max(delta, 0);
   const pct = Math.min(100, Math.max(0, (secs / ADZAN_LEAD_SECONDS) * 100));
   const time = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
-  const clock = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(
-    now.getSeconds(),
-  )}`;
 
   return (
     <div
-      className="absolute inset-0 flex flex-col items-center justify-center text-center"
+      className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center"
       style={{ background: t.adzanBg }}
     >
       {/* bingkai tipis ganda */}
       <div
-        data-frame
         className="pointer-events-none absolute"
         style={{
           inset: "3vh",
@@ -827,7 +592,6 @@ function AdzanScreen({
         }}
       />
       <div
-        data-frame
         className="pointer-events-none absolute"
         style={{
           inset: "4.6vh",
@@ -835,46 +599,11 @@ function AdzanScreen({
         }}
       />
 
-      {/* jam digital + zona waktu */}
-      <div
-        data-anim
-        className="relative"
-        style={{ marginBottom: "1.4vh", color: t.adzanTitle }}
-      >
-        <span
-          className="tabular-nums font-extrabold"
-          style={{ fontSize: "10vh", lineHeight: 1, letterSpacing: "0.04em" }}
-        >
-          {clock}
-        </span>
-        <span
-          className="absolute font-semibold"
-          style={{
-            left: "100%",
-            bottom: "1.2vh",
-            marginLeft: "1.8vh",
-            fontSize: "3.6vh",
-            lineHeight: 1,
-            color: t.pillAccent,
-          }}
-        >
-          {tzLabel(now)}
-        </span>
-      </div>
-
-      <p
-        data-anim
-        style={{
-          fontSize: "6.2vh",
-          color: t.adzanTitle,
-          letterSpacing: "0.02em",
-        }}
-      >
+      <p style={{ fontSize: "6.2vh", color: t.adzanTitle, letterSpacing: "0.02em" }}>
         {started ? "Telah Masuk Waktu" : "Menuju Adzan"}
       </p>
 
       <h2
-        data-anim
         className="font-extrabold uppercase"
         style={{
           fontSize: "min(24vh, 15vw)",
@@ -890,9 +619,7 @@ function AdzanScreen({
         {label}
       </h2>
 
-      {/* Bar progres: isi bar mengikuti sisa waktu, timer tetap di tengah. */}
       <div
-        data-anim
         className="relative overflow-hidden"
         style={{
           marginTop: "3vh",
@@ -903,22 +630,25 @@ function AdzanScreen({
         }}
       >
         <div
-          className="absolute inset-y-0 left-0"
+          className="flex h-full items-center justify-center gap-[1.6vh]"
           style={{
-            width: `${pct}%`,
+            width: `${Math.max(pct, 24)}%`,
             borderRadius: "999px",
             background: t.adzanFill,
+            color: t.adzanFillText,
             transition: "width 1s linear",
           }}
-        />
-        {/* lapisan dasar (di atas trek) */}
-        <TimerLabel time={time} color={t.adzanTitle} />
-        {/* lapisan putih, hanya terlihat di atas isi bar */}
-        <TimerLabel
-          time={time}
-          color={t.adzanFillText}
-          clip={`inset(0 ${100 - pct}% 0 0)`}
-        />
+        >
+          <span style={{ width: "6.6vh", height: "6.6vh" }}>
+            <AlarmIcon />
+          </span>
+          <span
+            className="tabular-nums font-extrabold"
+            style={{ fontSize: "7.4vh", lineHeight: 1 }}
+          >
+            {time}
+          </span>
+        </div>
       </div>
 
       <p
@@ -930,7 +660,7 @@ function AdzanScreen({
           color: t.adzanFooter,
         }}
       >
-        © {now.getFullYear()} Awas Imsak! — Commonly Works
+        © {year} Awas Imsak! — Commonly Works
       </p>
     </div>
   );

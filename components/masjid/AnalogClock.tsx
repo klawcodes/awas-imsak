@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./AnalogClock.module.css";
 
 const HOURS = Array.from({ length: 12 }, (_, i) => i);
@@ -18,39 +18,24 @@ export default function AnalogClock({
   className?: string;
   light?: boolean;
 }) {
-  const [angles, setAngles] = useState<{
-    s: number;
-    m: number;
-    h: number;
-    snap: boolean;
-  } | null>(null);
-  const lastDaySecRef = useRef(-1);
+  const [angles, setAngles] = useState<{ s: number; m: number; h: number } | null>(
+    null,
+  );
 
   useEffect(() => {
-    let id: ReturnType<typeof setTimeout>;
     const tick = () => {
       const now = new Date();
-      // Sudut dihitung dari detik sejak tengah malam (bukan epoch) supaya
-      // nilainya kecil. Sudut yang sangat besar (miliaran derajat) kehilangan
-      // presisi saat di-render dan membuat jarum bergetar / berubah posisi.
-      // Nilai maksimum tiap jarum kelipatan 360, jadi lompatan ke 0 di
-      // tengah malam tidak terlihat.
-      const daySec =
-        now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-      const preciseSec = daySec + now.getMilliseconds() / 1000;
-      const wrapped = daySec < lastDaySecRef.current;
-      lastDaySecRef.current = daySec;
+      const local = now.getTime() / 1000 - now.getTimezoneOffset() * 60;
+      const wholeSeconds = Math.floor(local);
       setAngles({
-        s: daySec * 6,
-        m: preciseSec * 0.1,
-        h: preciseSec / 120,
-        snap: wrapped, // matikan transisi sekali saat pergantian hari
+        s: wholeSeconds * 6,
+        m: local * 0.1,
+        h: local / 120,
       });
-      // Jadwalkan tepat sesudah pergantian detik berikutnya.
-      id = setTimeout(tick, 1000 - now.getMilliseconds() + 20);
     };
     tick();
-    return () => clearTimeout(id);
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
   }, []);
 
   return (
@@ -61,62 +46,54 @@ export default function AnalogClock({
     >
       <div className={styles.bezel} />
       <div className={styles.clock}>
-        <div className={styles.numbers}>
-          {HOURS.map((i) => {
-            const hour = i === 0 ? 12 : i;
-            const angle = i * 30;
-            return (
-              <div
-                key={`h-${i}`}
-                className={styles.number}
-                style={{
-                  transform: `rotate(${angle}deg) translateY(var(--dim-numerals-offset))`,
-                }}
-              >
-                <span style={{ transform: `rotate(${-angle}deg)` }}>
-                  {hour}
-                </span>
-              </div>
-            );
-          })}
-          {DASHES.map((i) => (
-            <span
-              key={`d-${i}`}
-              className={`${styles.dash} ${i % 5 === 0 ? styles.dashMajor : ""}`}
+      <div className={styles.numbers}>
+        {HOURS.map((i) => {
+          const hour = i === 0 ? 12 : i;
+          const angle = i * 30;
+          return (
+            <div
+              key={`h-${i}`}
+              className={styles.number}
               style={{
-                transform: `rotate(${i * 6}deg) translateY(var(--dim-dash-offset))`,
+                transform: `rotate(${angle}deg) translateY(var(--dim-numerals-offset))`,
               }}
             >
-              <span>&nbsp;</span>
-            </span>
-          ))}
-        </div>
+              <span style={{ transform: `rotate(${-angle}deg)` }}>{hour}</span>
+            </div>
+          );
+        })}
+        {DASHES.map((i) => (
+          <span
+            key={`d-${i}`}
+            className={`${styles.dash} ${i % 5 === 0 ? styles.dashMajor : ""}`}
+            style={{
+              transform: `rotate(${i * 6}deg) translateY(var(--dim-dash-offset))`,
+            }}
+          >
+            <span>&nbsp;</span>
+          </span>
+        ))}
+      </div>
 
-        <div className={styles.dial}>
-          <div
-            className={styles.second}
-            style={{
-              transform: `rotate(${angles ? angles.s : 0}deg)`,
-              transition: angles?.snap ? "none" : undefined,
-            }}
-          />
-          <div
-            className={styles.secondBack}
-            style={{
-              transform: `rotate(${angles ? angles.s + 180 : 180}deg)`,
-              transition: angles?.snap ? "none" : undefined,
-            }}
-          />
-          <div
-            className={`${styles.hand} ${styles.handMinute}`}
-            style={{ transform: `rotate(${angles ? angles.m : 0}deg)` }}
-          />
-          <div
-            className={styles.hand}
-            style={{ transform: `rotate(${angles ? angles.h : 0}deg)` }}
-          />
-          <div className={styles.center} />
-        </div>
+      <div className={styles.dial}>
+        <div
+          className={styles.second}
+          style={{ transform: `rotate(${angles ? angles.s : 0}deg)` }}
+        />
+        <div
+          className={styles.secondBack}
+          style={{ transform: `rotate(${angles ? angles.s + 180 : 180}deg)` }}
+        />
+        <div
+          className={`${styles.hand} ${styles.handMinute}`}
+          style={{ transform: `rotate(${angles ? angles.m : 0}deg)` }}
+        />
+        <div
+          className={styles.hand}
+          style={{ transform: `rotate(${angles ? angles.h : 0}deg)` }}
+        />
+        <div className={styles.center} />
+      </div>
       </div>
     </div>
   );

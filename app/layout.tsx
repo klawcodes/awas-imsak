@@ -1,23 +1,41 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import StarryBackground from "@/components/star/page";
+import JsonLd from "@/components/seo/JsonLd";
+import { siteConfig } from "@/components/seo/siteConfig";
 
-const siteUrl = "https://awasimsak.vercel.app";
-const siteTitle = "Awas Imsak! - Jadwal Sholat & Imsak";
-const siteDescription =
-  "Awas Imsak! adalah portal yang menghadirkan jadwal sholat dan imsak dengan akurat dan mudah diakses";
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: siteConfig.themeColor,
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: siteTitle,
-  description: siteDescription,
+  metadataBase: new URL(siteConfig.url),
+  // Halaman lain cukup mengisi `title`, hasilnya "Judul | Awas Imsak!"
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
   alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   verification: {
-    // Isi lewat env var GOOGLE_SITE_VERIFICATION (kode dari Search Console)
+    // Isi lewat env var GOOGLE_SITE_VERIFICATION (kode dari Search Console).
+    // Tidak perlu kalau Anda verifikasi lewat DNS.
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
-  applicationName: "Awas Imsak!",
+  applicationName: siteConfig.name,
   manifest: "/site.webmanifest",
   icons: {
     icon: [
@@ -32,52 +50,45 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Awas Imsak!",
+    title: siteConfig.name,
     statusBarStyle: "black-translucent",
   },
   referrer: "origin-when-cross-origin",
   keywords: [
-    "puasa",
-    "imsak",
-    "sholat",
-    "ramadhan",
     "jadwal imsak",
     "jadwal sholat",
-    "quran",
-    "baca quran",
+    "jadwal buka puasa",
+    "jadwal imsakiyah",
+    "niat puasa ramadhan",
+    "tadarus",
+    "tv masjid",
     "puasa ramadhan",
-    "bulan ramadhan",
   ],
   authors: [
-    { name: "RIOT REVENGER" },
-    { name: "Muhammad Dimas", url: "https://riotrevenger.xyz" },
+    { name: siteConfig.author.alias },
+    { name: siteConfig.author.name, url: siteConfig.author.url },
   ],
-  creator: "Commonly Works",
-  publisher: "RIOT REVENGER",
+  creator: siteConfig.publisher,
+  publisher: siteConfig.author.alias,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: siteTitle,
-    description: siteDescription,
-    url: siteUrl,
-    siteName: "Awas Imsak!",
-    locale: "id_ID",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
     type: "website",
-    images: [
-      {
-        url: "/img/twt-link.png",
-        alt: "Awas Imsak! - Jadwal Sholat & Imsak",
-      },
-    ],
+    images: [siteConfig.ogImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
-    images: ["/img/twt-link.png"],
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage.url],
   },
 };
 
@@ -89,6 +100,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body>
+        <JsonLd />
         <StarryBackground numberOfStars={50}>{children}</StarryBackground>
       </body>
     </html>
