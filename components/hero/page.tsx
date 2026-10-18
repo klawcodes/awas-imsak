@@ -34,7 +34,6 @@ export const config: Config = {
 const quickLinks = [
   { href: "/niat", label: "Awas Lupa Niat", delay: 1.5 },
   { href: "/tadarus", label: "Awas Lupa Tadarus", delay: 2 },
-  { href: "/resep", label: "Awas Lupa Masak", delay: 2.5 },
 ];
 
 const mainTimes = [
@@ -448,7 +447,7 @@ const Hero = () => {
             </p>
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
             {quickLinks.map(({ href, label, delay }) => (
               <Link key={href} href={href} className="block">
                 <motion.button
@@ -462,6 +461,20 @@ const Hero = () => {
               </Link>
             ))}
           </div>
+
+          <motion.div
+            className="mt-3 text-center sm:mt-4 lg:text-left"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 2.5, duration: 1 }}
+          >
+            <Link
+              href="/masjid"
+              className="text-[12px] text-[#cfe3bd] underline decoration-[#aad576]/50 underline-offset-4 transition-colors hover:text-white hover:decoration-[#aad576] sm:text-sm"
+            >
+              Ingin menampilkan khusus untuk masjid / mushola Anda?
+            </Link>
+          </motion.div>
 
           <motion.div
             className="mt-3 sm:mt-4"

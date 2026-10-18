@@ -1,0 +1,236 @@
+/*
+ * Jam analog — diadaptasi dari "CSS Clock (BC17 Braun x Paul Smith)" oleh Paul Noble
+ * https://codepen.io/paulnoble/pen/gbPGMZZ
+ * Warna jam (angka, garis, jarum) putih; muka jam hijau sesuai branding Awas Imsak!.
+ */
+
+.wrap {
+  --color-shadow: #04100a;
+  --color-white: #ffffff;
+
+  --dim-clock-size: 45vh;
+  --font-size-numerals: calc(var(--dim-clock-size) * 0.078);
+  --dim-numerals-offset: calc(var(--dim-clock-size) * -0.385);
+  --dim-dash-offset: calc(var(--dim-clock-size) * -0.462);
+  --dim-dash-size: calc(var(--dim-clock-size) * 0.022);
+  --dim-center-size: calc(var(--dim-clock-size) * 0.045);
+  --dim-dash-width: calc(var(--dim-dash-size) * 0.2);
+  --dim-hour-hand-height: calc(var(--dim-clock-size) * 0.27);
+  --dim-hour-hand-width: calc(var(--dim-clock-size) * 0.026);
+  --dim-minute-hand-height: calc(var(--dim-clock-size) * 0.38);
+  --dim-minute-hand-width: calc(var(--dim-clock-size) * 0.02);
+  --dim-second-hand-height: calc(var(--dim-clock-size) * 0.44);
+  --dim-second-hand-width: calc(var(--dim-clock-size) * 0.008);
+
+  position: relative;
+  width: var(--dim-clock-size);
+  height: var(--dim-clock-size);
+}
+
+.wrap *,
+.wrap *::before,
+.wrap *::after {
+  box-sizing: border-box;
+}
+
+/* Bingkai luar bermotif + cahaya */
+.bezel {
+  position: absolute;
+  inset: -6.5%;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.16) 0deg 3deg,
+      rgba(255, 255, 255, 0) 3deg 6deg
+    ),
+    radial-gradient(circle, #0d1811 0%, #1e3828 70%, #3e664e 100%);
+  box-shadow:
+    0 0 5vh rgba(170, 213, 118, 0.25),
+    0 2vh 6vh rgba(0, 0, 0, 0.55),
+    inset 0 0 1.2vh rgba(0, 0, 0, 0.5);
+}
+
+.clock {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    #1e3828 0%,
+    #12241a 50%,
+    #0d1811 100%
+  );
+  box-shadow:
+    inset 0 0 2.4vh rgba(0, 0, 0, 0.65),
+    0 0 0 0.3vh rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+.numbers {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  height: 0;
+  margin: auto;
+  overflow: visible;
+  font-family: "Poppins", "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.number {
+  color: var(--color-white);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  font-size: var(--font-size-numerals);
+  font-weight: 500;
+}
+
+.dash {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  height: 0;
+  overflow: visible;
+}
+
+.dash span {
+  display: block;
+  width: var(--dim-dash-width);
+  height: var(--dim-dash-size);
+  background-color: var(--color-white);
+  border-radius: 1px;
+  opacity: 0.8;
+}
+
+.dashMajor span {
+  height: calc(var(--dim-dash-size) * 1.7);
+  width: calc(var(--dim-dash-width) * 2.2);
+  opacity: 1;
+}
+
+.dial {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  width: 2px;
+  height: 2px;
+  margin: auto;
+}
+
+.hand {
+  position: absolute;
+  width: var(--dim-hour-hand-width);
+  height: var(--dim-hour-hand-height);
+  left: calc(1px - var(--dim-hour-hand-width) / 2);
+  bottom: 1px;
+  transform-origin: 50% 100%;
+  border-radius: 3px;
+  background-color: var(--color-white);
+  box-shadow: 0 0 1.2vh rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+.handMinute {
+  width: var(--dim-minute-hand-width);
+  height: var(--dim-minute-hand-height);
+  left: calc(1px - var(--dim-minute-hand-width) / 2);
+}
+
+.second {
+  position: absolute;
+  width: var(--dim-second-hand-width);
+  height: var(--dim-second-hand-height);
+  left: calc(1px - var(--dim-second-hand-width) / 2);
+  bottom: 1px;
+  transform-origin: 50% 100%;
+  background-color: var(--color-white);
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.secondBack {
+  position: absolute;
+  width: var(--dim-second-hand-width);
+  height: calc(var(--dim-second-hand-height) * 0.2);
+  left: calc(1px - var(--dim-second-hand-width) / 2);
+  bottom: 1px;
+  z-index: 2;
+  transform-origin: 50% 100%;
+  background-color: var(--color-white);
+  transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.center {
+  width: var(--dim-center-size);
+  height: var(--dim-center-size);
+  border-radius: 50%;
+  position: absolute;
+  left: calc(1px - var(--dim-center-size) / 2);
+  top: calc(1px - var(--dim-center-size) / 2);
+  background-color: var(--color-white);
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.6);
+  z-index: 3;
+}
+
+.center::before {
+  position: absolute;
+  inset: 30%;
+  background-color: #0d1811;
+  content: "";
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .second,
+  .secondBack {
+    transition: none;
+  }
+}
+
+/* ====== Mode terang: muka jam putih, angka & jarum hijau ====== */
+.light {
+  --color-white: #2b4733;
+}
+
+.light .bezel {
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(79, 119, 45, 0.18) 0deg 3deg,
+      rgba(255, 255, 255, 0) 3deg 6deg
+    ),
+    radial-gradient(circle, #ffffff 0%, #e4f0d6 70%, #aad576 100%);
+  box-shadow:
+    0 0 4vh rgba(79, 119, 45, 0.25),
+    0 2vh 6vh rgba(0, 0, 0, 0.25),
+    inset 0 0 1.2vh rgba(79, 119, 45, 0.3);
+}
+
+.light .clock {
+  background: radial-gradient(
+    circle at 50% 42%,
+    #ffffff 0%,
+    #f6faf1 60%,
+    #e4f0d6 100%
+  );
+  box-shadow:
+    inset 0 0 2vh rgba(79, 119, 45, 0.25),
+    0 0 0 0.3vh rgba(79, 119, 45, 0.5);
+}
+
+.light .hand,
+.light .second {
+  box-shadow: 0 0 0.8vh rgba(0, 0, 0, 0.25);
+}
+
+.light .center::before {
+  background-color: #ffffff;
+}

@@ -22,6 +22,7 @@
     "aos": "^2.3.4",
     "bmkg-wrapper": "^2.0.0",
     "framer-motion": "^11.0.3",
+    "gsap": "^3.15.0",
     "next": "14.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -73,9 +73,9 @@ const Niat = () => {
               Awas Lupa Tadarus
             </div>
           </Link>
-          <Link href="/resep">
+          <Link href="/masjid">
             <div className="bg-[#0d1811] border border-[#3e664e] py-3 px-4 hover:border-[#2b4733] transition-colors active-shadow rounded-full max-[640px]:text-[13px] max-[414px]:text-[13px] max-[360px]:text-[10px]">
-              Awas Lupa Buka
+              TV Masjid
             </div>
           </Link>
         </div>
