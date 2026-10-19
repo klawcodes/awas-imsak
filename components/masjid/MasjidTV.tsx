@@ -17,6 +17,12 @@ interface Props {
 
 type Schedule = Record<string, string>;
 
+interface AdzanState {
+  label: string;
+  delta: number;
+  total: number;
+}
+
 const TICKER_MESSAGES = [
   "Mohon matikan ponsel atau aktifkan mode senyap",
   "Luruskan dan rapatkan shaf",
@@ -30,6 +36,15 @@ const FONT = '"Poppins", "Segoe UI", Helvetica, Arial, sans-serif';
 const ADZAN_LEAD_SECONDS = 5 * 60;
 const ADZAN_HOLD_SECONDS = 60;
 const ADZAN_KEYS = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
+
+// Lama mode tes layar adzan (detik hitung mundur + masa tahan sesudahnya).
+const DEMO_COUNTDOWN_SECONDS = 20;
+const DEMO_TOTAL_SECONDS = DEMO_COUNTDOWN_SECONDS + ADZAN_HOLD_SECONDS;
+
+// Saklar tes: true = tekan tombol "H" untuk memicu layar adzan + tirai
+// (dan tombol "Tes layar adzan" tampil). false = hotkey & tombol nonaktif.
+// Ubah ke false kalau sudah selesai mengetes.
+const ENABLE_DEMO_HOTKEY = true;
 
 const pad = (n: number) => n.toString().padStart(2, "0");
 
@@ -174,15 +189,45 @@ export default function MasjidTV({
   const [now, setNow] = useState<Date>(() => new Date());
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [bgImage, setBgImage] = useState<string | null>(null);
+  // Waktu mulai mode tes layar adzan (ms), null jika tidak aktif.
+  const [demoStart, setDemoStart] = useState<number | null>(null);
 
   // Gambar masjid dipilih acak sekali saat TV dibuka.
   useEffect(() => {
     setBgImage(pickRandomMosqueImage());
   }, []);
 
+  // Tick dijadwalkan tepat di batas detik berikutnya (bukan setInterval 1000ms
+  // yang melenceng), supaya angka detik tidak sesekali terlewat / ganda.
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      setNow(new Date());
+      timer = setTimeout(tick, 1000 - (Date.now() % 1000) + 5);
+    };
+    timer = setTimeout(tick, 1000 - (Date.now() % 1000) + 5);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Hotkey "H": memicu layar adzan mode tes (hanya jika ENABLE_DEMO_HOTKEY true).
+  useEffect(() => {
+    if (!ENABLE_DEMO_HOTKEY) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.toLowerCase() !== "h") return;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        target?.isContentEditable
+      )
+        return;
+      setDemoStart(Date.now());
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   // Ambil jadwal; ulangi otomatis saat tanggal berganti.
@@ -248,7 +293,18 @@ export default function MasjidTV({
   }, [schedule, nowSec, rows]);
 
   // Layar adzan: 5 menit sebelum waktu adzan sampai 1 menit sesudahnya.
-  const adzan = useMemo(() => {
+  // Mode tes (tombol "Tes layar adzan") memakai hitung mundur singkat.
+  const adzan = useMemo<AdzanState | null>(() => {
+    if (demoStart !== null) {
+      const elapsed = Math.floor((now.getTime() - demoStart) / 1000);
+      if (elapsed >= 0 && elapsed < DEMO_TOTAL_SECONDS) {
+        return {
+          label: "Maghrib",
+          delta: DEMO_COUNTDOWN_SECONDS - elapsed,
+          total: DEMO_COUNTDOWN_SECONDS,
+        };
+      }
+    }
     if (!schedule) return null;
     for (const r of rows) {
       if (!ADZAN_KEYS.includes(r.key)) continue;
@@ -256,14 +312,14 @@ export default function MasjidTV({
       if (ts === null) continue;
       const delta = ts - nowSec;
       if (delta <= ADZAN_LEAD_SECONDS && delta > -ADZAN_HOLD_SECONDS) {
-        return { label: r.label, delta };
+        return { label: r.label, delta, total: ADZAN_LEAD_SECONDS };
       }
     }
     return null;
-  }, [schedule, nowSec, rows]);
+  }, [schedule, nowSec, rows, demoStart, now]);
 
   // Layar adzan tetap terpasang selama animasi outro GSAP berjalan.
-  const lastAdzan = useRef<{ label: string; delta: number } | null>(null);
+  const lastAdzan = useRef<AdzanState | null>(null);
   if (adzan) lastAdzan.current = adzan;
   const [adzanMounted, setAdzanMounted] = useState(false);
   useEffect(() => {
@@ -563,6 +619,7 @@ export default function MasjidTV({
             open={!!adzan}
             label={lastAdzan.current.label}
             delta={lastAdzan.current.delta}
+            total={lastAdzan.current.total}
             year={now.getFullYear()}
             clock={clockText}
             zone={zone}
@@ -591,6 +648,14 @@ export default function MasjidTV({
         >
           Layar penuh
         </button>
+        {ENABLE_DEMO_HOTKEY && (
+          <button
+            onClick={() => setDemoStart(Date.now())}
+            className="rounded-full border border-white/20 bg-black/70 px-4 py-1.5 text-xs text-white hover:border-[#aad576]/60"
+          >
+            Tes layar adzan (H)
+          </button>
+        )}
       </div>
     </div>
   );
@@ -621,6 +686,7 @@ function AdzanScreen({
   open,
   label,
   delta,
+  total,
   year,
   clock,
   zone,
@@ -630,6 +696,7 @@ function AdzanScreen({
   open: boolean;
   label: string;
   delta: number;
+  total: number;
   year: number;
   clock: string;
   zone: string;
@@ -641,9 +708,15 @@ function AdzanScreen({
   onClosedRef.current = onClosed;
   const firstRun = useRef(true);
 
+  // Dua fase: (1) hitung mundur menuju adzan, (2) jeda ADZAN_HOLD_SECONDS
+  // ("Telah Masuk Waktu") untuk muadzin mengumandangkan adzan. Timer & progress
+  // bar mengikuti fase yang sedang berjalan.
   const started = delta <= 0;
-  const secs = Math.max(delta, 0);
-  const pct = Math.min(100, Math.max(0, (secs / ADZAN_LEAD_SECONDS) * 100));
+  const secs = started
+    ? Math.min(ADZAN_HOLD_SECONDS, Math.max(0, ADZAN_HOLD_SECONDS + delta))
+    : delta;
+  const span = started ? ADZAN_HOLD_SECONDS : total;
+  const pct = Math.min(100, Math.max(0, (secs / span) * 100));
   const time = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
 
   // Posisi awal sebelum frame pertama digambar: tirai terbuka di luar layar,
@@ -764,7 +837,14 @@ function AdzanScreen({
     };
   }, [open]);
 
-  useEffect(() => () => tl.current?.kill(), []);
+  // PERBAIKAN build Vercel: cleanup HARUS bertipe void. Sebelumnya
+  // `() => () => tl.current?.kill()` mengembalikan Timeline sehingga
+  // TypeScript menolaknya ("not assignable to type 'void | Destructor'").
+  useEffect(() => {
+    return () => {
+      tl.current?.kill();
+    };
+  }, []);
 
   const curtainBg = `repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0, rgba(0,0,0,0.14) 1.4vw, rgba(255,255,255,0.07) 1.4vw, rgba(255,255,255,0.07) 2.8vw), ${t.pillIconBg}`;
 
