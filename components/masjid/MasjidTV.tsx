@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
 import AnalogClock from "./AnalogClock";
 import { pickRandomMosqueImage } from "./mosqueImages";
 import type { Location } from "./selectStyles";
@@ -147,13 +148,13 @@ function AlarmIcon() {
         cy="26"
         r="15"
         fill="none"
-        stroke="#fff"
+        stroke="currentColor"
         strokeWidth="3"
       />
       <path
         d="M24 17v10l6 4M7 12l7-6M41 12l-7-6M10 41l4-4M38 41l-4-4"
         fill="none"
-        stroke="#fff"
+        stroke="currentColor"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -261,6 +262,28 @@ export default function MasjidTV({
     return null;
   }, [schedule, nowSec, rows]);
 
+  // Layar adzan tetap terpasang selama animasi outro GSAP berjalan.
+  const lastAdzan = useRef<{ label: string; delta: number } | null>(null);
+  if (adzan) lastAdzan.current = adzan;
+  const [adzanMounted, setAdzanMounted] = useState(false);
+  useEffect(() => {
+    if (adzan) setAdzanMounted(true);
+  }, [adzan]);
+
+  // Zona waktu perangkat -> WIB / WITA / WIT.
+  const offsetMin = -now.getTimezoneOffset();
+  const zone =
+    offsetMin === 420
+      ? "WIB"
+      : offsetMin === 480
+        ? "WITA"
+        : offsetMin === 540
+          ? "WIT"
+          : "";
+  const clockText = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(
+    now.getSeconds(),
+  )}`;
+
   const weekday = now.toLocaleDateString("id-ID", { weekday: "long" });
   const dateText = now.toLocaleDateString("id-ID", {
     day: "numeric",
@@ -336,12 +359,19 @@ export default function MasjidTV({
               </h1>
               <p
                 className="truncate"
-                style={{ fontSize: "2.1vh", marginTop: "0.6vh", color: t.subText }}
+                style={{
+                  fontSize: "2.1vh",
+                  marginTop: "0.6vh",
+                  color: t.subText,
+                }}
               >
                 {location.label}
               </p>
             </div>
-            <div className="shrink-0" style={{ width: "10.5vh", height: "10.5vh" }}>
+            <div
+              className="shrink-0"
+              style={{ width: "10.5vh", height: "10.5vh" }}
+            >
               <MosqueBadge t={t} />
             </div>
           </div>
@@ -527,12 +557,16 @@ export default function MasjidTV({
         </div>
 
         {/* ====== Layar adzan: hitung mundur 5 menit ====== */}
-        {adzan && (
+        {adzanMounted && lastAdzan.current && (
           <AdzanScreen
             t={t}
-            label={adzan.label}
-            delta={adzan.delta}
+            open={!!adzan}
+            label={lastAdzan.current.label}
+            delta={lastAdzan.current.delta}
             year={now.getFullYear()}
+            clock={clockText}
+            zone={zone}
+            onClosed={() => setAdzanMounted(false)}
           />
         )}
       </div>
@@ -562,106 +596,315 @@ export default function MasjidTV({
   );
 }
 
+/* Isi timer (ikon + waktu). Dipakai dua kali: lapisan dasar & lapisan di atas progress. */
+function TimerLabel({ time, color }: { time: string; color: string }) {
+  return (
+    <div
+      className="flex h-full w-full items-center justify-center gap-[1.6vh]"
+      style={{ color }}
+    >
+      <span style={{ width: "6.6vh", height: "6.6vh" }}>
+        <AlarmIcon />
+      </span>
+      <span
+        className="tabular-nums font-extrabold"
+        style={{ fontSize: "7.4vh", lineHeight: 1 }}
+      >
+        {time}
+      </span>
+    </div>
+  );
+}
+
 function AdzanScreen({
   t,
+  open,
   label,
   delta,
   year,
+  clock,
+  zone,
+  onClosed,
 }: {
   t: ThemeTokens;
+  open: boolean;
   label: string;
   delta: number;
   year: number;
+  clock: string;
+  zone: string;
+  onClosed: () => void;
 }) {
+  const root = useRef<HTMLDivElement>(null);
+  const tl = useRef<gsap.core.Timeline | null>(null);
+  const onClosedRef = useRef(onClosed);
+  onClosedRef.current = onClosed;
+  const firstRun = useRef(true);
+
   const started = delta <= 0;
   const secs = Math.max(delta, 0);
   const pct = Math.min(100, Math.max(0, (secs / ADZAN_LEAD_SECONDS) * 100));
   const time = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
 
+  // Posisi awal sebelum frame pertama digambar: tirai terbuka di luar layar,
+  // isi layar adzan tersembunyi.
+  useLayoutEffect(() => {
+    if (!root.current) return;
+    const q = gsap.utils.selector(root.current);
+    gsap.set(q(".az-curtain-l"), { xPercent: -101 });
+    gsap.set(q(".az-curtain-r"), { xPercent: 101 });
+    gsap.set(q(".az-stage"), { autoAlpha: 0 });
+    gsap.set(q(".az-item"), { autoAlpha: 0, y: 28 });
+    gsap.set(q(".az-frame"), { autoAlpha: 0, scale: 1.04 });
+  }, []);
+
+  // Intro saat `open` true, outro saat `open` false (lalu lepas dari DOM).
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const q = gsap.utils.selector(el);
+    tl.current?.kill();
+
+    if (open) {
+      firstRun.current = false;
+      const tlIn = gsap.timeline();
+      tlIn
+        // 1) tirai menutup layar TV
+        .set(q(".az-curtain-l, .az-curtain-r"), { autoAlpha: 1 })
+        .to(q(".az-curtain-l"), {
+          xPercent: 0,
+          duration: 0.9,
+          ease: "power3.inOut",
+        })
+        .to(
+          q(".az-curtain-r"),
+          { xPercent: 0, duration: 0.9, ease: "power3.inOut" },
+          "<",
+        )
+        // 2) saat tertutup, ganti ke layar adzan
+        .set(q(".az-stage"), { autoAlpha: 1 })
+        // 3) tirai membuka
+        .to(q(".az-curtain-l"), {
+          xPercent: -101,
+          duration: 1.1,
+          ease: "power3.inOut",
+        })
+        .to(
+          q(".az-curtain-r"),
+          { xPercent: 101, duration: 1.1, ease: "power3.inOut" },
+          "<",
+        )
+        // 4) isi muncul berurutan
+        .to(
+          q(".az-frame"),
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.9,
+            ease: "power2.out",
+            stagger: 0.12,
+          },
+          "-=0.7",
+        )
+        .to(
+          q(".az-item"),
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.12,
+          },
+          "-=0.7",
+        );
+      tl.current = tlIn;
+    } else if (!firstRun.current) {
+      const tlOut = gsap.timeline({
+        onComplete: () => onClosedRef.current(),
+      });
+      tlOut
+        // isi naik & memudar
+        .to(q(".az-item"), {
+          autoAlpha: 0,
+          y: -24,
+          duration: 0.5,
+          ease: "power2.in",
+          stagger: { each: 0.06, from: "end" },
+        })
+        .to(q(".az-frame"), { autoAlpha: 0, duration: 0.4 }, "<")
+        // tirai menutup
+        .to(
+          q(".az-curtain-l"),
+          { xPercent: 0, duration: 0.9, ease: "power3.inOut" },
+          "-=0.1",
+        )
+        .to(
+          q(".az-curtain-r"),
+          { xPercent: 0, duration: 0.9, ease: "power3.inOut" },
+          "<",
+        )
+        // layar adzan dilepas, TV tampak kembali
+        .set(q(".az-stage"), { autoAlpha: 0 })
+        .to(q(".az-curtain-l"), {
+          xPercent: -101,
+          duration: 1.1,
+          ease: "power3.inOut",
+        })
+        .to(
+          q(".az-curtain-r"),
+          { xPercent: 101, duration: 1.1, ease: "power3.inOut" },
+          "<",
+        );
+      tl.current = tlOut;
+    }
+
+    return () => {
+      // tidak di-kill di sini agar outro tetap selesai walau re-render;
+      // kill dilakukan di awal efek berikutnya / saat unmount.
+    };
+  }, [open]);
+
+  useEffect(() => () => tl.current?.kill(), []);
+
+  const curtainBg = `repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0, rgba(0,0,0,0.14) 1.4vw, rgba(255,255,255,0.07) 1.4vw, rgba(255,255,255,0.07) 2.8vw), ${t.pillIconBg}`;
+
   return (
     <div
-      className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center"
-      style={{ background: t.adzanBg }}
+      ref={root}
+      className="pointer-events-none absolute inset-0 z-40 overflow-hidden"
     >
-      {/* bingkai tipis ganda */}
+      {/* ===== Isi layar adzan ===== */}
       <div
-        className="pointer-events-none absolute"
-        style={{
-          inset: "3vh",
-          border: `0.5vh solid ${t.adzanFrame}`,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute"
-        style={{
-          inset: "4.6vh",
-          border: `0.2vh solid ${t.adzanFrame}`,
-        }}
-      />
-
-      <p style={{ fontSize: "6.2vh", color: t.adzanTitle, letterSpacing: "0.02em" }}>
-        {started ? "Telah Masuk Waktu" : "Menuju Adzan"}
-      </p>
-
-      <h2
-        className="font-extrabold uppercase"
-        style={{
-          fontSize: "min(24vh, 15vw)",
-          lineHeight: 1.05,
-          letterSpacing: "0.04em",
-          backgroundImage: t.adzanGradient,
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-          WebkitTextFillColor: "transparent",
-        }}
+        className="az-stage absolute inset-0 flex flex-col items-center justify-center text-center"
+        style={{ background: t.adzanBg }}
       >
-        {label}
-      </h2>
-
-      <div
-        className="relative overflow-hidden"
-        style={{
-          marginTop: "3vh",
-          width: "62vw",
-          height: "11vh",
-          borderRadius: "999px",
-          background: t.adzanTrack,
-        }}
-      >
+        {/* bingkai tipis ganda */}
         <div
-          className="flex h-full items-center justify-center gap-[1.6vh]"
+          className="az-frame pointer-events-none absolute"
+          style={{ inset: "3vh", border: `0.5vh solid ${t.adzanFrame}` }}
+        />
+        <div
+          className="az-frame pointer-events-none absolute"
+          style={{ inset: "4.6vh", border: `0.2vh solid ${t.adzanFrame}` }}
+        />
+
+        {/* Jam + zona waktu di atas tulisan "Menuju Adzan" */}
+        <div
+          className="az-item flex items-baseline justify-center"
+          style={{ gap: "1.6vh", color: t.adzanTitle, marginBottom: "1vh" }}
+        >
+          <span
+            className="tabular-nums font-bold"
+            style={{ fontSize: "9vh", lineHeight: 1, letterSpacing: "0.02em" }}
+          >
+            {clock}
+          </span>
+          {zone && (
+            <span
+              className="font-semibold"
+              style={{ fontSize: "4vh", color: t.pillAccent, lineHeight: 1 }}
+            >
+              {zone}
+            </span>
+          )}
+        </div>
+
+        <p
+          className="az-item"
           style={{
-            width: `${Math.max(pct, 24)}%`,
-            borderRadius: "999px",
-            background: t.adzanFill,
-            color: t.adzanFillText,
-            transition: "width 1s linear",
+            fontSize: "6.2vh",
+            color: t.adzanTitle,
+            letterSpacing: "0.02em",
           }}
         >
-          <span style={{ width: "6.6vh", height: "6.6vh" }}>
-            <AlarmIcon />
-          </span>
-          <span
-            className="tabular-nums font-extrabold"
-            style={{ fontSize: "7.4vh", lineHeight: 1 }}
+          {started ? "Telah Masuk Waktu" : "Menuju Adzan"}
+        </p>
+
+        <h2
+          className="az-item font-extrabold uppercase"
+          style={{
+            fontSize: "min(24vh, 15vw)",
+            lineHeight: 1.05,
+            letterSpacing: "0.04em",
+            backgroundImage: t.adzanGradient,
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          {label}
+        </h2>
+
+        {/* Progress bar: timer SELALU di tengah, tidak ikut lebar progress */}
+        <div
+          className="az-item relative overflow-hidden"
+          style={{
+            marginTop: "3vh",
+            width: "62vw",
+            height: "11vh",
+            borderRadius: "999px",
+            background: t.adzanTrack,
+          }}
+        >
+          {/* isi progress */}
+          <div
+            className="absolute inset-y-0 left-0"
+            style={{
+              width: `${pct}%`,
+              borderRadius: "999px",
+              background: t.adzanFill,
+              transition: "width 1s linear",
+            }}
+          />
+          {/* timer di atas track (warna tema) */}
+          <div className="absolute inset-0">
+            <TimerLabel time={time} color={t.adzanTitle} />
+          </div>
+          {/* salinan timer putih, hanya terlihat di atas area progress */}
+          <div
+            className="absolute inset-0"
+            style={{
+              clipPath: `inset(0 ${100 - pct}% 0 0)`,
+              transition: "clip-path 1s linear",
+            }}
           >
-            {time}
-          </span>
+            <TimerLabel time={time} color={t.adzanFillText} />
+          </div>
         </div>
+
+        <p
+          className="az-item absolute"
+          style={{
+            bottom: "6.6vh",
+            fontSize: "1.9vh",
+            letterSpacing: "0.08em",
+            color: t.adzanFooter,
+          }}
+        >
+          © {year} Awas Imsak! — Commonly Works
+        </p>
       </div>
 
-      <p
-        className="absolute"
+      {/* ===== Tirai (GSAP) ===== */}
+      <div
+        className="az-curtain-l absolute left-0 top-0 h-full"
         style={{
-          bottom: "6.6vh",
-          fontSize: "1.9vh",
-          letterSpacing: "0.08em",
-          color: t.adzanFooter,
+          width: "50.5%",
+          background: curtainBg,
+          borderRight: `0.6vh solid ${t.badgeMoon}`,
+          boxShadow: "0 0 4vh rgba(0,0,0,0.45)",
         }}
-      >
-        © {year} Awas Imsak! — Commonly Works
-      </p>
+      />
+      <div
+        className="az-curtain-r absolute right-0 top-0 h-full"
+        style={{
+          width: "50.5%",
+          background: curtainBg,
+          borderLeft: `0.6vh solid ${t.badgeMoon}`,
+          boxShadow: "0 0 4vh rgba(0,0,0,0.45)",
+        }}
+      />
     </div>
   );
 }
