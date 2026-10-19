@@ -7,7 +7,7 @@ export const siteConfig = {
   name: "Awas Imsak!",
   title: "Awas Imsak! - Jadwal Sholat, Imsak & Buka Puasa",
   description:
-    "Jadwal sholat, imsak, dan buka puasa yang akurat untuk seluruh kota di Indonesia. Dilengkapi niat puasa, pengingat tadarus, dan tampilan TV untuk masjid atau mushola.",
+    "Jadwal imsak hari ini, jadwal sholat, dan waktu buka puasa untuk seluruh kota di Indonesia. Dilengkapi niat puasa Ramadhan, pengingat tadarus, dan tampilan TV masjid.",
   locale: "id_ID",
   language: "id-ID",
   themeColor: "#0d1811",
