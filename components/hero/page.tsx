@@ -495,7 +495,7 @@ const Hero = () => {
                 className="hover:text-white hover:underline"
               >
                 Commonly Works
-              </Link>
+              </Link>{" "}
               under the MIT license.
             </p>
           </motion.div>
