@@ -496,6 +496,7 @@ const Hero = () => {
               >
                 Commonly Works
               </Link>
+              under the MIT license.
             </p>
           </motion.div>
         </div>

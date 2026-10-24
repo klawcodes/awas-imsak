@@ -44,7 +44,7 @@ const DEMO_TOTAL_SECONDS = DEMO_COUNTDOWN_SECONDS + ADZAN_HOLD_SECONDS;
 // Saklar tes: true = tekan tombol "H" untuk memicu layar adzan + tirai
 // (dan tombol "Tes layar adzan" tampil). false = hotkey & tombol nonaktif.
 // Ubah ke false kalau sudah selesai mengetes.
-const ENABLE_DEMO_HOTKEY = true;
+const ENABLE_DEMO_HOTKEY = false;
 
 const pad = (n: number) => n.toString().padStart(2, "0");
 

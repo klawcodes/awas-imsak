@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
 
-## Getting Started
+<img src="public/img/icon-app.png" alt="Ikon Awas Imsak" width="140" />
 
-First, run the development server:
+# 🌙 Awas Imsak
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Teman setia Anda dalam bulan puasa.**
+Temukan jadwal imsak dan sholat, serta fitur-fitur lainnya untuk mendukung puasa Anda dengan lebih baik.
+
+[🌐 Buka Aplikasi](https://imsak.my.id) · [🐛 Laporkan Bug](https://github.com/klawcodes/awas-imsak/issues) · [💡 Usul Fitur](https://github.com/klawcodes/awas-imsak/issues)
+
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38BDF8?logo=tailwindcss&logoColor=white)
+![Capacitor](https://img.shields.io/badge/Capacitor-7-119EFF?logo=capacitor&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+</div>
+
+---
+
+## ✨ Tentang
+
+**Awas Imsak** adalah aplikasi web (dan Android lewat Capacitor) untuk menemani ibadah puasa, terutama di bulan Ramadhan. Aplikasi ini menampilkan jadwal imsak dan sholat agar Anda tidak terlewat waktu penting.
+
+Versi web tersedia di **[imsak.my.id](https://imsak.my.id)**.
+
+## 🧰 Tech Stack
+
+| Kategori   | Teknologi                                                                   |
+| ---------- | --------------------------------------------------------------------------- |
+| Framework  | [Next.js 14](https://nextjs.org/) (App Router) + React 18                   |
+| Bahasa     | TypeScript                                                                  |
+| Styling    | Tailwind CSS, [NextUI](https://nextui.org/)                                 |
+| State      | Redux Toolkit, React Redux                                                  |
+| Animasi    | Framer Motion, GSAP, AOS, tsParticles                                       |
+| UI lainnya | React Select, React Hot Toast, React Paginate, Slick Carousel, Font Awesome |
+| Mobile     | [Capacitor](https://capacitorjs.com/) (Android)                             |
+
+## 📁 Struktur Proyek
+
+```
+awas-imsak/
+├── android/        # Project Android (Capacitor)
+├── app/            # Halaman & routing (Next.js App Router)
+├── components/     # Komponen UI
+├── fonts/          # Font lokal
+├── public/         # Aset statis
+├── redux/          # Store, slice, dan state management
+├── utils/          # Fungsi bantu
+├── capacitor.config.ts
+├── next.config.mjs
+└── tailwind.config.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Menjalankan Secara Lokal
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prasyarat
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [Node.js](https://nodejs.org/) 18.17 atau lebih baru
+- npm / yarn / pnpm
 
-## Learn More
+### Langkah
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# 1. Clone repo
+git clone https://github.com/klawcodes/awas-imsak.git
+cd awas-imsak
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 2. Install dependencies
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# 3. Jalankan development server
+npm run dev
+```
 
-## Deploy on Vercel
+Buka [http://localhost:3000](http://localhost:3000) di browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Script yang tersedia
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Perintah        | Fungsi                         |
+| --------------- | ------------------------------ |
+| `npm run dev`   | Menjalankan server development |
+| `npm run build` | Build untuk production         |
+| `npm run start` | Menjalankan hasil build        |
+| `npm run lint`  | Mengecek kode dengan ESLint    |
+
+## 📱 Build Android (Capacitor)
+
+```bash
+# Build project web
+npm run build
+
+# Sinkronkan ke project Android
+npx cap sync android
+
+# Buka di Android Studio
+npx cap open android
+```
+
+> Pastikan `webDir` pada `capacitor.config.ts` sesuai dengan folder hasil build Anda.
+
+## 🤝 Kontribusi
+
+Kontribusi, issue, dan usulan fitur sangat disambut.
+
+1. Fork repo ini
+2. Buat branch baru: `git checkout -b fitur/nama-fitur`
+3. Commit perubahan: `git commit -m "Tambah fitur ..."`
+4. Push: `git push origin fitur/nama-fitur`
+5. Buka Pull Request
+
+## 📄 Lisensi
+
+Proyek ini dirilis di bawah lisensi **MIT**. Lihat file [`LICENSE`](./LICENSE) untuk detail lengkapnya.
+
+Anda bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini, **dengan syarat tetap menyertakan pemberitahuan hak cipta (copyright) dan teks lisensi asli** di setiap salinan atau turunannya. Mengganti nama atau menghapus atribusi pembuat asli tanpa kredit merupakan pelanggaran lisensi.
+
+## 👤 Pembuat
+
+Dibuat oleh [**klawcodes**](https://github.com/klawcodes).
+
+Kalau proyek ini bermanfaat, jangan lupa beri ⭐ di repo ini.
